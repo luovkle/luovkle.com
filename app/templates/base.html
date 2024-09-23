@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon"
+          type="image/png"
+          href="{{ url_for('static', filename='favicon.png') }}" />
+    <title>
+      {% block title %}
+      {% endblock title %}
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <main class="mx-auto">
+      {% block content %}
+      {% endblock content %}
+    </main>
+
+    {% block scripts %}
+    {% endblock scripts %}
+  </body>
+</html>

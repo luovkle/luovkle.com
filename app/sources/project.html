@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ project.title }}
+{% endblock title %}
+
+{% block content %}
+  <div class="text-slate-200">
+    <div style="background-image: url('{{ url_for('static', filename='{{ project.cover_image }}') }}')">
+      <div class="h-[700px] w-4/5">
+        <div class="pt-[200px] flex flex-col justify-center px-24 space-y-5">
+          <ul class="flex gap-2">
+            <li>
+              <a href="{{ url_for('views.home') }}" class="text-slate-400">Home</a>
+            </li>
+            <li class="text-slate-400">/</li>
+            <li>
+              <a href="{{ url_for('views.projects') }}" class="text-slate-400">Projects</a>
+            </li>
+            <li class="text-slate-400">/</li>
+            <li>{{ project.title }}</li>
+          </ul>
+          <h1 class="font-black text-5xl">{{ project.title }}</h1>
+        </div>
+      </div>
+    </div>
+    <div class="space-y-14 mt-[-100px] py-20 px-24 bg-neutral-950 rounded-t-3xl">
+      <div class="flex justify-between">
+        <div class="flex gap-4 text-slate-400">
+          <span>{{ project.reading_time }}</span>
+          <span>{{ project.date }}</span>
+        </div>
+        <button type="button" onclick="copyLink()" class="font-bold text-xl">Share</button>
+      </div>
+      <div class="text-justify space-y-10">{{ project.content }}</div>
+      <div class="flex flex-col gap-1">
+        <a href="{{ project.repository }}"
+           target="_blank"
+           rel="noopener noreferrer">Source Code</a>
+        <a href="{{ project.website }}"
+           target="_blank"
+           rel="noopener noreferrer">Website</a>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    const copyLink = () => {
+      navigator.clipboard.writeText(
+        "{{ url_for('views.single_project', slug='{{ project.slug }}', _external=True) }}"
+      );
+    };
+  </script>
+{% endblock scripts %}

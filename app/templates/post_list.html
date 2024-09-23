@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Revelations
+{% endblock title %}
+
+{% block content %}
+  <ul class="flex gap-2">
+    <li>
+      <a href="{{ url_for('views.home') }}" class="text-slate-400">Home</a>
+    </li>
+    <li class="text-slate-400">/</li>
+    <li>Revelations</li>
+  </ul>
+  <h1>Discover my latest revelations</h1>
+  <hr />
+  <h2>Revelations</h2>
+  {% if posts %}
+    <ul class="space-y-3">
+      {% for post in posts %}
+        <li>
+          <a href="{{ url_for('views.single_post', slug=post.slug) }}"
+             class="flex bg-slate-900 text-slate-200 rounded-3xl overflow-hidden">
+            <img src="{{ url_for('static', filename=post.cover_image) }}"
+                 alt="banner"
+                 class="w-3/5" />
+            <div class="h-auto w-2/5 m-8 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="space-x-2">
+                  <span class="bg-slate-800 px-2 py-1 rounded-full text-sm">{{ post.reading_time }}</span>
+                  <span>{{ post.topic }}</span>
+                </div>
+                <h2 class="font-extrabold text-2xl">{{ post.title }}</h2>
+              </div>
+              <span class="flex justify-end text-sm text-slate-400">{{ post.date }}</span>
+            </div>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock content %}
