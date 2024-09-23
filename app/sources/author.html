@@ -5,6 +5,13 @@
 {% endblock title %}
 
 {% block content %}
+  <ul class="flex gap-2">
+    <li>
+      <a href="{{ url_for('views.home') }}" class="text-slate-400">Home</a>
+    </li>
+    <li class="text-slate-400">/</li>
+    <li>{{ author.full_name }}</li>
+  </ul>
   <div class="flex items-center gap-10">
     <div class="flex items-center">
       <div class="space-y-10">
