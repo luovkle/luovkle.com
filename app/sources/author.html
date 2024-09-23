@@ -5,39 +5,43 @@
 {% endblock title %}
 
 {% block content %}
-  <ul class="flex gap-2">
-    <li>
-      <a href="{{ url_for('views.home') }}" class="text-slate-400">Home</a>
-    </li>
-    <li class="text-slate-400">/</li>
-    <li>{{ author.full_name }}</li>
-  </ul>
-  <div class="flex items-center gap-10">
-    <div class="flex items-center">
-      <div class="space-y-10">
-        <div class="space-y-3">
-          <h1 class="font-black text-5xl">{{ author.full_name }}</h1>
-          <h2 class="font-bold text-2xl">{{ author.role }}</h2>
+  <div class="w-[768px] mx-auto">
+    <ul class="flex gap-2 py-24">
+      <li>
+        <a href="{{ url_for('views.home') }}" class="text-neutral-400">Home</a>
+      </li>
+      <li class="text-neutral-400">/</li>
+      <li>{{ author.full_name }}</li>
+    </ul>
+    <div class="flex items-center gap-10">
+      <div class="flex items-center">
+        <div class="space-y-10">
+          <div class="space-y-3">
+            <h1 class="font-black text-5xl">{{ author.full_name }}</h1>
+            <h2 class="font-bold text-2xl">{{ author.role }}</h2>
+          </div>
+          <p class="text-justify">{{ author.about }}</p>
+          <ul class="flex gap-4">
+            <li>
+              <a href="{{ author.github_url }}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="py-2 px-6 border border-neutral-200 rounded-full">Github</a>
+            </li>
+            <li>
+              <a href="{{ author.linkedin_url }}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="py-2 px-6 border border-neutral-200 rounded-full">Linkedin</a>
+            </li>
+          </ul>
         </div>
-        <p class="text-justify">{{ author.about }}</p>
-        <ul class="flex gap-4">
-          <li>
-            <a href="{{ author.github_url }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="py-2 px-6 border-2 border-black rounded-full">Github</a>
-          </li>
-          <li>
-            <a href="{{ author.linkedin_url }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="py-2 px-6 border-2 border-black rounded-full">Linkedin</a>
-          </li>
-        </ul>
       </div>
+      <img src="{{ url_for('static', filename='{{ author.picture }}') }}"
+           alt="picture"
+           width="256"
+           height="256"
+           class="rounded-full h-64" />
     </div>
-    <img src="{{ url_for('static', filename='{{ author.picture }}') }}"
-         alt="picture"
-         class="rounded-full h-64" />
   </div>
 {% endblock content %}

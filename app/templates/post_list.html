@@ -5,38 +5,45 @@
 {% endblock title %}
 
 {% block content %}
-  <ul class="flex gap-2">
-    <li>
-      <a href="{{ url_for('views.home') }}" class="text-slate-400">Home</a>
-    </li>
-    <li class="text-slate-400">/</li>
-    <li>Revelations</li>
-  </ul>
-  <h1>Discover my latest revelations</h1>
-  <hr />
-  <h2>Revelations</h2>
-  {% if posts %}
-    <ul class="space-y-3">
-      {% for post in posts %}
+  <div class="w-[768px] mx-auto divide-y">
+    <div class="py-24">
+      <ul class="flex gap-2">
         <li>
-          <a href="{{ url_for('views.single_post', slug=post.slug) }}"
-             class="flex bg-slate-900 text-slate-200 rounded-3xl overflow-hidden">
-            <img src="{{ url_for('static', filename=post.cover_image) }}"
-                 alt="banner"
-                 class="w-3/5" />
-            <div class="h-auto w-2/5 m-8 flex flex-col justify-between">
-              <div class="space-y-2">
-                <div class="space-x-2">
-                  <span class="bg-slate-800 px-2 py-1 rounded-full text-sm">{{ post.reading_time }}</span>
-                  <span>{{ post.topic }}</span>
-                </div>
-                <h2 class="font-extrabold text-2xl">{{ post.title }}</h2>
-              </div>
-              <span class="flex justify-end text-sm text-slate-400">{{ post.date }}</span>
-            </div>
-          </a>
+          <a href="{{ url_for('views.home') }}" class="text-neutral-400">Home</a>
         </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+        <li class="text-neutral-400">/</li>
+        <li>Revelations</li>
+      </ul>
+      <h1 class="font-extrabold text-4xl">Discover my latest revelations</h1>
+    </div>
+    <div>
+      <h2 class="font-extrabold text-3xl mt-4">Revelations</h2>
+      {% if posts %}
+        <ul class="mt-12 mb-3 space-y-3 flex flex-col items-center">
+          {% for post in posts %}
+            <li class="w-[768px]">
+              <a href="{{ url_for('views.single_post', slug=post.slug) }}"
+                 class="flex bg-neutral-900 rounded-3xl overflow-hidden">
+                <img src="{{ url_for('static', filename=post.cover_image) }}"
+                     alt="banner"
+                     width="450"
+                     height="300"
+                     class="w-3/5" />
+                <div class="h-auto w-2/5 m-8 flex flex-col justify-between">
+                  <div class="space-y-2">
+                    <div class="space-x-2">
+                      <span class="bg-neutral-800 px-2 py-1 rounded-full text-sm">{{ post.reading_time }}</span>
+                      <span>{{ post.topic }}</span>
+                    </div>
+                    <h2 class="font-extrabold text-2xl">{{ post.title }}</h2>
+                  </div>
+                  <span class="flex justify-end text-sm text-neutral-400">{{ post.date }}</span>
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
 {% endblock content %}

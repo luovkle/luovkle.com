@@ -5,54 +5,62 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="flex justify-between items-center">
-    <div class="space-y-3">
-      <h1 class="font-black text-5xl">{{ author.full_name }}</h1>
-      <h2 class="font-bold text-2xl">{{ author.role }}</h2>
+  <div class="w-[768px] mx-auto divide-y">
+    <div class="py-24 flex justify-between items-center">
+      <div class="space-y-3">
+        <h1 class="font-black text-5xl">{{ author.full_name }}</h1>
+        <h2 class="font-bold text-2xl">{{ author.role }}</h2>
+      </div>
+      <div>
+        <a href="{{ url_for('views.author') }}" class="font-bold text-2xl">About</a>
+      </div>
     </div>
     <div>
-      <a href="{{ url_for('views.author') }}" class="font-bold text-xl">About</a>
+      <h3 class="font-extrabold text-3xl mt-4">Sections</h3>
+      <ul class="mt-12 mb-3 space-y-3 flex flex-col items-center">
+        <li class="w-[768px]">
+          <a href="{{ url_for('views.posts') }}"
+             class="flex bg-neutral-900 rounded-3xl overflow-hidden">
+            <img src="{{ url_for('static', filename='{{ posts_section.cover_image }}') }}"
+                 alt="banner"
+                 width="450"
+                 height="300"
+                 class="w-3/5" />
+            <div class="h-auto w-2/5 m-8">
+              <div class="space-y-2">
+                <div>
+                  <span class="bg-neutral-800 px-2 py-1 rounded-full text-sm">{{ posts_section.entries }} revelations</span>
+                </div>
+                <div>
+                  <h2 class="font-extrabold text-2xl">Revelations</h2>
+                  <p>{{ posts_section.description }}</p>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="w-[768px]">
+          <a href="{{ url_for('views.projects') }}"
+             class="flex bg-neutral-900 rounded-3xl overflow-hidden">
+            <img src="{{ url_for('static', filename='{{ projects_section.cover_image }}') }}"
+                 alt="banner"
+                 width="450"
+                 height="300"
+                 class="w-3/5" />
+            <div class="h-auto w-2/5 m-8">
+              <div class="space-y-2">
+                <div>
+                  <span class="bg-neutral-800 px-2 py-1 rounded-full text-sm">{{ projects_section.entries }} projects</span>
+                </div>
+                <div>
+                  <h2 class="font-extrabold text-2xl">Projects</h2>
+                  <p>{{ projects_section.description }}</p>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
     </div>
   </div>
-  <hr />
-  <ul class="space-y-3">
-    <li>
-      <a href="{{ url_for('views.posts') }}"
-         class="flex bg-slate-900 text-slate-200 rounded-3xl overflow-hidden">
-        <img src="{{ url_for('static', filename='{{ posts_section.cover_image }}') }}"
-             alt="banner"
-             class="w-3/5" />
-        <div class="h-auto w-2/5 m-8">
-          <div class="space-y-2">
-            <div>
-              <span class="bg-slate-800 px-2 py-1 rounded-full text-sm">{{ posts_section.entries }} revelations</span>
-            </div>
-            <div>
-              <h2 class="font-extrabold text-2xl">Revelations</h2>
-              <p>{{ posts_section.description }}</p>
-            </div>
-          </div>
-        </div>
-      </a>
-    </li>
-    <li>
-      <a href="{{ url_for('views.projects') }}"
-         class="flex bg-slate-900 text-slate-200 rounded-3xl overflow-hidden">
-        <img src="{{ url_for('static', filename='{{ projects_section.cover_image }}') }}"
-             alt="banner"
-             class="w-3/5" />
-        <div class="h-auto w-2/5 m-8">
-          <div class="space-y-2">
-            <div>
-              <span class="bg-slate-800 px-2 py-1 rounded-full text-sm">{{ projects_section.entries }} projects</span>
-            </div>
-            <div>
-              <h2 class="font-extrabold text-2xl">Projects</h2>
-              <p>{{ projects_section.description }}</p>
-            </div>
-          </div>
-        </div>
-      </a>
-    </li>
-  </ul>
 {% endblock content %}
