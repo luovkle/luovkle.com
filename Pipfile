@@ -7,6 +7,7 @@ name = "pypi"
 flask = "*"
 markdown = "*"
 pyyaml = "*"
+uwsgi = "*"
 
 [dev-packages]
 djlint = "*"
