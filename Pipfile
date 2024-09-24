@@ -21,6 +21,7 @@ python_version = "3.12"
 
 [scripts]
 dev = "flask run --debug --port 4000"
+prod = "uwsgi --http :4000 --master -w app.wsgi:app"
 format = "sh ./scripts/format.sh"
 lint = "sh ./scripts/lint.sh"
 "dev:css" = "pnpm run dev:css"
