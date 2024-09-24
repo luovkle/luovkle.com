@@ -10,7 +10,8 @@
       {% block title %}
       {% endblock title %}
     </title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{{ url_for('static', filename='styles.css') }}"
+          rel="stylesheet" />
   </head>
   <body class="bg-neutral-950 text-neutral-200">
     <main class="mx-auto">
