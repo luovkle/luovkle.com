@@ -8,7 +8,8 @@
   <div class="w-[768px] mx-auto">
     <ul class="flex gap-2 py-24">
       <li>
-        <a href="{{ url_for('views.home') }}" class="text-neutral-400">Home</a>
+        <a href="{{ url_for('views.home') }}"
+           class="text-neutral-400 hover:text-neutral-300">Home</a>
       </li>
       <li class="text-neutral-400">/</li>
       <li>{{ author.full_name }}</li>
@@ -26,13 +27,13 @@
               <a href="{{ author.github_url }}"
                  target="_blank"
                  rel="noopener noreferrer"
-                 class="py-2 px-6 border border-neutral-200 rounded-full">Github</a>
+                 class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full">Github</a>
             </li>
             <li>
               <a href="{{ author.linkedin_url }}"
                  target="_blank"
                  rel="noopener noreferrer"
-                 class="py-2 px-6 border border-neutral-200 rounded-full">Linkedin</a>
+                 class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full">Linkedin</a>
             </li>
           </ul>
         </div>

@@ -5,18 +5,21 @@
 {% endblock title %}
 
 {% block content %}
-  <div>
-    <div style="background-image: url('{{ url_for('static', filename='{{ project.cover_image }}') }}')">
-      <div class="h-[700px]">
+  <div class="max-w-[1024px] mx-auto">
+    <div style="background-image: url('{{ url_for('static', filename='{{ project.cover_image }}') }}')"
+         class="lg:rounded-b-3xl">
+      <div class="h-[700px] lg:h-[600px]">
         <div class="pt-[200px] flex flex-col justify-center">
           <div class="w-[768px] mx-auto space-y-5">
             <ul class="flex gap-2">
               <li>
-                <a href="{{ url_for('views.home') }}" class="text-neutral-400">Home</a>
+                <a href="{{ url_for('views.home') }}"
+                   class="text-neutral-400 hover:text-neutral-300">Home</a>
               </li>
               <li class="text-neutral-400">/</li>
               <li>
-                <a href="{{ url_for('views.projects') }}" class="text-neutral-400">Projects</a>
+                <a href="{{ url_for('views.projects') }}"
+                   class="text-neutral-400 hover:text-neutral-300">Projects</a>
               </li>
               <li class="text-neutral-400">/</li>
               <li>{{ project.title }}</li>
@@ -26,23 +29,34 @@
         </div>
       </div>
     </div>
-    <div class="mt-[-100px] py-20 bg-neutral-950 rounded-t-3xl">
+    <div class="mt-[-100px] lg:m-0 py-20 bg-neutral-950 rounded-t-3xl lg:rounded-none">
       <div class="w-[768px] mx-auto space-y-14">
         <div class="flex justify-between">
           <div class="flex gap-4 text-neutral-400">
             <span>{{ project.reading_time }}</span>
             <span>{{ project.date }}</span>
           </div>
-          <button type="button" onclick="copyLink()" class="font-bold text-xl">Share</button>
+          <div>
+            <button type="button"
+                    onclick="copyLink()"
+                    class="font-bold text-xl hover:text-neutral-400">Share</button>
+            <!-- Tooltip -->
+            <div id="tooltip"
+                 class="absolute transform -translate-x-1/2 mt-2 px-4 py-2 text-sm bg-neutral-800 rounded-md opacity-0 invisible transition-opacity duration-300 ease-in-out">
+              Link Copied!
+            </div>
+          </div>
         </div>
         <div class="text-justify space-y-10">{{ project.content }}</div>
         <div class="flex flex-col gap-4">
           <a href="{{ project.repository }}"
              target="_blank"
-             rel="noopener noreferrer">Source Code</a>
+             rel="noopener noreferrer"
+             class="hover:text-neutral-400">Source Code</a>
           <a href="{{ project.website }}"
              target="_blank"
-             rel="noopener noreferrer">Website</a>
+             rel="noopener noreferrer"
+             class="hover:text-neutral-400">Website</a>
         </div>
       </div>
     </div>
@@ -55,6 +69,15 @@
       navigator.clipboard.writeText(
         "{{ url_for('views.single_project', slug='{{ project.slug }}', _external=True) }}"
       );
+
+      // Show tooltip for 3 seconds
+      const tooltip = document.getElementById('tooltip');
+      tooltip.classList.remove('opacity-0', 'invisible');
+      tooltip.classList.add('opacity-100', 'visible');
+      setTimeout(() => {
+        tooltip.classList.remove('opacity-100', 'visible');
+        tooltip.classList.add('opacity-0', 'invisible');
+      }, 3000);
     };
   </script>
 {% endblock scripts %}
