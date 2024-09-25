@@ -40,11 +40,14 @@ def get_cover(title):
             return get_cover_number(n - max, max)
         return n
 
-    covers_path = Path("app/static/covers/")
+    covers_path = Path("app/static/images/headers/")
     number_of_covers = len(list(covers_path.glob("*.png")))
     cover_number = get_cover_number(len(title), number_of_covers)
     cover_file = "cover_" + "{:03d}".format(cover_number) + ".png"
-    return f"covers/{cover_file}"
+    return {
+        "header": f"images/headers/{cover_file}",
+        "thumbnail": f"images/thumbnails/{cover_file}",
+    }
 
 
 def get_reading_time(content):
@@ -139,10 +142,10 @@ def build_homepage_template(homepage_data, author_data, posts_data, projects_dat
     replacements = {
         "{{ author.full_name }}": author_data["full_name"],
         "{{ author.role }}": author_data["role"],
-        "{{ posts_section.cover_image }}": get_cover("posts"),
+        "{{ posts_section.cover_image }}": get_cover("posts")["thumbnail"],
         "{{ posts_section.entries }}": str(len(posts_data)),
         "{{ posts_section.description }}": homepage_data["posts_section_description"],
-        "{{ projects_section.cover_image }}": get_cover("projects"),
+        "{{ projects_section.cover_image }}": get_cover("projects")["thumbnail"],
         "{{ projects_section.entries }}": str(len(projects_data)),
         "{{ projects_section.description }}": homepage_data[
             "projects_section_description"
@@ -168,9 +171,11 @@ def build_content():
     posts_data = []
     for path in post_paths:
         data = get_data_from_markdown_file(path)
+        cover = get_cover(data["title"])
         data = {
             **data,
-            "cover_image": get_cover(data["title"]),
+            "cover_image": cover["header"],
+            "thumbnail": cover["thumbnail"],
             "reading_time": get_reading_time(data["content"]),
             "date": get_creation_date(path),
         }
@@ -190,9 +195,11 @@ def build_content():
     projects_data = []
     for path in project_paths:
         data = get_data_from_markdown_file(path)
+        cover = get_cover(data["title"])
         data = {
             **data,
-            "cover_image": get_cover(data["title"]),
+            "cover_image": cover["header"],
+            "thumbnail": cover["thumbnail"],
             "reading_time": get_reading_time(data["content"]),
             "date": get_creation_date(path),
         }

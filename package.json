@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/styles.css --watch",
-    "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/styles.css --minify"
+    "dev:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --watch",
+    "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --minify"
 
   },
 	"devDependencies": {

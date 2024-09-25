@@ -299,4 +299,4 @@ app/templates/author.html
 app/templates/homepage.html
 
 # Static
-app/static/styles.css
+app/static/css/styles.css
