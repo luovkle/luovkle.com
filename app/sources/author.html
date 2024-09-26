@@ -27,13 +27,19 @@
               <a href="{{ author.github_url }}"
                  target="_blank"
                  rel="noopener noreferrer"
-                 class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full">Github</a>
+                 class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full flex items-center gap-2">
+                {% include "icons/github-fill.svg" %}
+                Github
+              </a>
             </li>
             <li>
               <a href="{{ author.linkedin_url }}"
                  target="_blank"
                  rel="noopener noreferrer"
-                 class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full">Linkedin</a>
+                 class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full flex items-center gap-2">
+                {% include "icons/linkedin-box-fill.svg" %}
+                Linkedin
+              </a>
             </li>
           </ul>
         </div>

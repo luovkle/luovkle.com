@@ -31,7 +31,7 @@
     </div>
     <div class="mt-[-100px] lg:m-0 py-20 bg-neutral-950 rounded-t-3xl lg:rounded-none">
       <div class="w-[768px] mx-auto space-y-14">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
           <div class="flex gap-4 text-neutral-400">
             <span>{{ post.reading_time }}</span>
             <span>{{ post.date }}</span>
@@ -39,7 +39,10 @@
           <div>
             <button type="button"
                     onclick="copyLink()"
-                    class="font-bold text-xl hover:text-neutral-400">Share</button>
+                    class="font-bold text-xl hover:text-neutral-400 flex items-center gap-2">
+              {% include "icons/attachment-line.svg" %}
+              Share
+            </button>
             <!-- Tooltip -->
             <div id="tooltip"
                  class="absolute transform -translate-x-1/2 mt-2 px-4 py-2 text-sm bg-neutral-800 rounded-md opacity-0 invisible transition-opacity duration-300 ease-in-out">
