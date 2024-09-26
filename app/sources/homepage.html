@@ -6,15 +6,12 @@
 
 {% block content %}
   <div class="w-[768px] mx-auto divide-y">
-    <div class="py-24 flex justify-between items-center">
-      <div class="space-y-3">
+    <div class="py-24">
+      <a href="{{ url_for('views.author') }}"
+         class="space-y-3 hover:text-neutral-400">
         <h1 class="font-black text-5xl">{{ author.full_name }}</h1>
         <h2 class="font-bold text-2xl">{{ author.role }}</h2>
-      </div>
-      <div>
-        <a href="{{ url_for('views.author') }}"
-           class="font-bold text-2xl hover:text-neutral-400">About</a>
-      </div>
+      </a>
     </div>
     <div>
       <h3 class="font-extrabold text-3xl mt-4">Sections</h3>
