@@ -183,7 +183,7 @@ def build_content():
         content_template_paths["posts"][data["slug"]] = {
             "slug": data["slug"],
             "template": str(template_path),
-            "cover_image": data["cover_image"],
+            "cover_image": data["thumbnail"],
             "title": data["title"],
             "topic": data["topic"],
             "reading_time": data["reading_time"],
@@ -207,7 +207,7 @@ def build_content():
         content_template_paths["projects"][data["slug"]] = {
             "slug": data["slug"],
             "template": str(template_path),
-            "cover_image": data["cover_image"],
+            "cover_image": data["thumbnail"],
             "title": data["title"],
             "description": data["description"],
             "repository": data.get("repository"),
