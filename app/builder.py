@@ -5,27 +5,9 @@ from pathlib import Path
 
 import markdown
 import yaml
+from flask import url_for
 
-content_paths = {
-    "author": "app/content/author/author.md",
-    "posts": "app/content/posts",
-    "projects": "app/content/projects",
-    "homepage": "app/content/homepage.md",
-}
-
-template_paths = {
-    "author": "app/templates",
-    "posts": "app/templates/posts",
-    "projects": "app/templates/projects",
-    "homepage": "app/templates",
-}
-
-source_paths = {
-    "author": "app/sources/author.html",
-    "posts": "app/sources/post.html",
-    "projects": "app/sources/project.html",
-    "homepage": "app/sources/homepage.html",
-}
+from .config import content_paths, source_paths, template_paths
 
 
 def render_source(source, replacements):
@@ -80,6 +62,37 @@ def get_data_from_markdown_file(file_path):
     metadata_dict = yaml.safe_load(metadata)
     html_body = markdown.markdown(body)
     return {**metadata_dict, "content": html_body}
+
+
+def get_meta_tags_data():
+    metadata_path = Path(content_paths["metadata"])
+    metadata_data = get_data_from_markdown_file(metadata_path)
+    default_image = get_cover(metadata_data["author"])
+    default_image_url = url_for(
+        "static", filename=default_image["thumbnail"], _external=True
+    )
+    return {
+        "description": metadata_data["description"],
+        "keywords": ", ".join(metadata_data["keywords"]),
+        "author": metadata_data["author"],
+        "language": ", ".join(metadata_data["language"]),
+        "robots": ", ".join(metadata_data["robots"]),
+        "og": {
+            "title": metadata_data["og:title"],
+            "description": metadata_data["og:description"],
+            "image": metadata_data.get("og:image") or default_image_url,
+            "url": metadata_data["og:url"],
+            "type": metadata_data["og:type"],
+            "locale": metadata_data["og:locale"],
+        },
+        "twitter": {
+            "card": metadata_data["twitter:card"],
+            "title": metadata_data["twitter:title"],
+            "description": metadata_data["twitter:description"],
+            "image": metadata_data.get("twitter:image") or default_image_url,
+            "creator": metadata_data["twitter:creator"],
+        },
+    }
 
 
 def build_post_template(post_data):
