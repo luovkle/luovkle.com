@@ -23,7 +23,7 @@
         <ul class="mt-12 mb-3 space-y-3 flex flex-col items-center">
           {% for project in projects %}
             <li class="w-[768px]">
-              <a href="{{ url_for('views.single_project', slug=project.slug) }}"
+              <a href="{{ url_for('views.project_detail', slug=project.slug) }}"
                  class="flex bg-neutral-900 rounded-3xl overflow-hidden">
                 <img src="{{ url_for('static', filename=project.cover_image) }}"
                      alt="banner"

@@ -1,9 +1,9 @@
 from flask import Blueprint, abort, render_template
 
-from .builder import build_content
 from .content import get_meta
+from .loader import get_content_data
 
-content_template_paths = build_content()
+content = get_content_data()
 
 bp = Blueprint("views", __name__)
 
@@ -11,42 +11,48 @@ bp = Blueprint("views", __name__)
 @bp.route("/")
 def home():
     meta = get_meta()
-    return render_template("homepage.html", meta=meta)
+    return render_template(
+        "homepage.html",
+        meta=meta,
+        author=content["author"],
+        homepage=content["homepage"],
+    )
 
 
 @bp.route("/p")
-def posts():
+def post_list():
     meta = get_meta()
-    context = list(content_template_paths["posts"].values())
+    context = list(content["posts"].values())
     return render_template("post_list.html", meta=meta, posts=context)
 
 
 @bp.route("/p/<slug>")
-def single_post(slug):
+def post_detail(slug):
     meta = get_meta()
-    post = content_template_paths["posts"].get(slug)
+    post = content["posts"].get(slug)
     if not post:
         abort(404)
-    return render_template(post["template"], meta=meta)
+    return render_template("post_detail.html", meta=meta, post=post)
 
 
 @bp.route("/pr")
-def projects():
+def project_list():
     meta = get_meta()
-    context = list(content_template_paths["projects"].values())
+    context = list(content["projects"].values())
     return render_template("project_list.html", meta=meta, projects=context)
 
 
 @bp.route("/pr/<slug>")
-def single_project(slug):
+def project_detail(slug):
     meta = get_meta()
-    project = content_template_paths["projects"].get(slug)
+    project = content["projects"].get(slug)
     if not project:
         abort(404)
-    return render_template(project["template"], meta=meta)
+    return render_template("project_detail.html", meta=meta, project=project)
 
 
 @bp.route("/author")
 def author():
     meta = get_meta()
-    return render_template("author.html", meta=meta)
+    author = content["author"]
+    return render_template("author.html", meta=meta, author=author)

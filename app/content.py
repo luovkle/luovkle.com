@@ -1,6 +1,6 @@
 from flask import g
 
-from .builder import get_meta_tags_data
+from .loader import get_meta_tags_data
 
 
 def get_meta():

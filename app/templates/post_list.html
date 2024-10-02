@@ -23,7 +23,7 @@
         <ul class="mt-12 mb-3 space-y-3 flex flex-col items-center">
           {% for post in posts %}
             <li class="w-[768px]">
-              <a href="{{ url_for('views.single_post', slug=post.slug) }}"
+              <a href="{{ url_for('views.post_detail', slug=post.slug) }}"
                  class="flex bg-neutral-900 rounded-3xl overflow-hidden">
                 <img src="{{ url_for('static', filename=post.cover_image) }}"
                      alt="banner"

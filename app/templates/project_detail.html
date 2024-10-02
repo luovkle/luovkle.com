@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class="max-w-[1024px] mx-auto">
-    <div style="background-image: url('{{ url_for('static', filename='{{ project.cover_image }}') }}')"
+    <div style="background-image: url('{{ url_for('static', filename=project.cover_image) }}')"
          class="lg:rounded-b-3xl">
       <div class="h-[700px] lg:h-[600px]">
         <div class="pt-[200px] flex flex-col justify-center">
@@ -18,7 +18,7 @@
               </li>
               <li class="text-neutral-400">/</li>
               <li>
-                <a href="{{ url_for('views.projects') }}"
+                <a href="{{ url_for('views.project_list') }}"
                    class="text-neutral-400 hover:text-neutral-300">Projects</a>
               </li>
               <li class="text-neutral-400">/</li>
@@ -51,12 +51,14 @@
             </div>
           </div>
         </div>
-        <div class="text-justify space-y-10">{{ project.content }}</div>
+        <div class="text-justify space-y-10">{{ project.content|safe }}</div>
         <div class="flex flex-col gap-4">
-          <a href="{{ project.repository }}"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="hover:text-neutral-400">Source Code</a>
+          {% if project.repository %}
+            <a href="{{ project.repository }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="hover:text-neutral-400">Source Code</a>
+          {% endif %}
           <a href="{{ project.website }}"
              target="_blank"
              rel="noopener noreferrer"
@@ -71,7 +73,7 @@
   <script type="text/javascript">
     const copyLink = () => {
       navigator.clipboard.writeText(
-        "{{ url_for('views.single_project', slug='{{ project.slug }}', _external=True) }}"
+        "{{ url_for('views.project_detail', slug=project.slug, _external=True) }}"
       );
 
       const shareBtn = document.getElementById("share-btn");

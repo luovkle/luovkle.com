@@ -292,11 +292,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Templates
-app/templates/posts/*.html
-app/templates/projects/*.html
-app/templates/author.html
-app/templates/homepage.html
-
 # Static
 app/static/css/styles.css

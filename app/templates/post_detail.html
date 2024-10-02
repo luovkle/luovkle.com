@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class="max-w-[1024px] mx-auto">
-    <div style="background-image: url('{{ url_for('static', filename='{{ post.cover_image }}') }}')"
+    <div style="background-image: url('{{ url_for('static', filename=post.cover_image) }}')"
          class="lg:rounded-b-3xl">
       <div class="h-[700px] lg:h-[600px]">
         <div class="pt-[200px] flex flex-col justify-center">
@@ -18,7 +18,7 @@
               </li>
               <li class="text-neutral-400">/</li>
               <li>
-                <a href="{{ url_for('views.posts') }}"
+                <a href="{{ url_for('views.post_list') }}"
                    class="text-neutral-400 hover:text-neutral-300">Revelations</a>
               </li>
               <li class="text-neutral-400">/</li>
@@ -51,7 +51,7 @@
             </div>
           </div>
         </div>
-        <div class="text-justify space-y-10">{{ post.content }}</div>
+        <div class="text-justify space-y-10">{{ post.content|safe }}</div>
       </div>
     </div>
   </div>
@@ -61,7 +61,7 @@
   <script type="text/javascript">
     const copyLink = () => {
       navigator.clipboard.writeText(
-        "{{ url_for('views.single_post', slug='{{ post.slug }}', _external=True) }}"
+        "{{ url_for('views.post_detail', slug=post.slug, _external=True) }}"
       );
 
       const shareBtn = document.getElementById("share-btn");
