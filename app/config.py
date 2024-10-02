@@ -1,9 +1,9 @@
 content_paths = {
-    "author": "app/content/author/author.md",
-    "posts": "app/content/posts",
-    "projects": "app/content/projects",
-    "homepage": "app/content/homepage.md",
-    "metadata": "app/content/metadata.md",
+    "author": "content/author/author.md",
+    "posts": "content/posts",
+    "projects": "content/projects",
+    "homepage": "content/homepage.md",
+    "metadata": "content/metadata.md",
 }
 
 template_paths = {
