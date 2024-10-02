@@ -12,7 +12,7 @@ content_paths = {
     "posts": "content/posts",
     "projects": "content/projects",
     "homepage": "content/homepage.md",
-    "metadata": "content/metadata.md",
+    "meta": "content/meta.md",
 }
 
 
@@ -75,33 +75,33 @@ def get_data_from_markdown_file(file_path):
     return {**metadata_dict, "content": html_body}
 
 
-def get_meta_tags_data():
-    metadata_path = Path(content_paths["metadata"])
-    metadata_data = get_data_from_markdown_file(metadata_path)
-    default_image = get_cover(metadata_data["author"])
+def get_meta_data():
+    meta_path = Path(content_paths["meta"])
+    meta_data = get_data_from_markdown_file(meta_path)
+    default_image = get_cover(meta_data["author"])
     default_image_url = url_for(
         "static", filename=default_image["thumbnail"], _external=True
     )
     return {
-        "description": metadata_data["description"],
-        "keywords": ", ".join(metadata_data["keywords"]),
-        "author": metadata_data["author"],
-        "language": ", ".join(metadata_data["language"]),
-        "robots": ", ".join(metadata_data["robots"]),
+        "description": meta_data["description"],
+        "keywords": ", ".join(meta_data["keywords"]),
+        "author": meta_data["author"],
+        "language": ", ".join(meta_data["language"]),
+        "robots": ", ".join(meta_data["robots"]),
         "og": {
-            "title": metadata_data["og:title"],
-            "description": metadata_data["og:description"],
-            "image": metadata_data.get("og:image") or default_image_url,
-            "url": metadata_data["og:url"],
-            "type": metadata_data["og:type"],
-            "locale": metadata_data["og:locale"],
+            "title": meta_data["og:title"],
+            "description": meta_data["og:description"],
+            "image": meta_data.get("og:image") or default_image_url,
+            "url": meta_data["og:url"],
+            "type": meta_data["og:type"],
+            "locale": meta_data["og:locale"],
         },
         "twitter": {
-            "card": metadata_data["twitter:card"],
-            "title": metadata_data["twitter:title"],
-            "description": metadata_data["twitter:description"],
-            "image": metadata_data.get("twitter:image") or default_image_url,
-            "creator": metadata_data["twitter:creator"],
+            "card": meta_data["twitter:card"],
+            "title": meta_data["twitter:title"],
+            "description": meta_data["twitter:description"],
+            "image": meta_data.get("twitter:image") or default_image_url,
+            "creator": meta_data["twitter:creator"],
         },
     }
 
@@ -174,6 +174,7 @@ def get_homepage_data(posts_data, projects_data):
 
 def get_content_data():
     data = {
+        "meta": get_meta_data(),
         "author": get_author_data(),
         "posts": get_posts_data(),
         "projects": get_projects_data(),
