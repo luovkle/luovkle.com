@@ -5,7 +5,6 @@ COPY ["./package.json", "./pnpm-lock.yaml", "/css-builder/"]
 RUN pnpm i --frozen-lockfile
 COPY ["./app/assets/", "/css-builder/app/assets/"]
 COPY ["./app/templates/", "/css-builder/app/templates"]
-COPY ["./app/sources/", "/css-builder/app/sources"]
 RUN pnpm build:css
 
 FROM python:3.12-slim-bookworm AS runner
@@ -18,5 +17,6 @@ RUN apt-get remove build-essential -y && apt-get autoremove -y
 COPY ["./app/", "/runner/app/"]
 COPY --from=css-builder \
   ["/css-builder/app/static/css/styles.css", "/runner/app/static/css/"]
+COPY ["./content/", "/runner/content/"]
 EXPOSE 4000
 CMD ["pipenv", "run", "prod"]
