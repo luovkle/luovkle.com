@@ -32,6 +32,11 @@ def get_cover(title):
     }
 
 
+def get_slug(file_path):
+    file = file_path.parts[-1]
+    return file.removesuffix(".md").replace("_", "-")
+
+
 def get_reading_time(content):
     # number of words in an post / 200 words per minute
     reading_time = round(len(content.split()) / 200)
@@ -187,10 +192,11 @@ def build_content():
         cover = get_cover(data["title"])
         data = {
             **data,
+            "slug": data.get("slug") or get_slug(path),
             "cover_image": cover["header"],
             "thumbnail": cover["thumbnail"],
             "reading_time": get_reading_time(data["content"]),
-            "date": get_creation_date(path),
+            "date": data.get("date") or get_creation_date(path),
         }
         template_path = build_post_template(data)
         content_template_paths["posts"][data["slug"]] = {
@@ -211,10 +217,11 @@ def build_content():
         cover = get_cover(data["title"])
         data = {
             **data,
+            "slug": data.get("slug") or get_slug(path),
             "cover_image": cover["header"],
             "thumbnail": cover["thumbnail"],
             "reading_time": get_reading_time(data["content"]),
-            "date": get_creation_date(path),
+            "date": data.get("date") or get_creation_date(path),
         }
         template_path = build_project_template(data)
         content_template_paths["projects"][data["slug"]] = {
