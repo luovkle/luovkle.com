@@ -61,6 +61,16 @@ def find_markdown_files(path):
     return list(files_path.glob("*.md"))
 
 
+def copy_pictures_to_static_dir(picture_content_path):
+    picture_parent, picture = picture_content_path.parts[-2:]
+    static_path = Path("app/static/images") / picture_parent
+    if not static_path.is_dir():
+        static_path.mkdir()
+    picture_static_path = static_path / picture
+    picture_static_path.write_bytes(picture_content_path.read_bytes())
+    return str(Path(*picture_static_path.parts[-3:]))
+
+
 def get_data_from_markdown_file(file_path):
     content = file_path.read_text(encoding="utf-8")
     metadata_pattern = r"^---\s*\n(.*?)\n---\s*\n(.*)$"
@@ -109,7 +119,8 @@ def get_meta_data():
 def get_author_data():
     path = Path(content_paths["author"])
     data = get_data_from_markdown_file(path)
-    data["picture"] = f"images/author/{data['picture']}"
+    picture_content_path = Path(f"content/author/{data['picture']}")
+    data["picture"] = copy_pictures_to_static_dir(picture_content_path)
     return data
 
 
