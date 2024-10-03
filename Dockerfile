@@ -18,5 +18,5 @@ COPY ["./app/", "/runner/app/"]
 COPY --from=css-builder \
   ["/css-builder/app/static/css/styles.css", "/runner/app/static/css/"]
 COPY ["./content/", "/runner/content/"]
-EXPOSE 4000
+EXPOSE 80
 CMD ["pipenv", "run", "prod"]
