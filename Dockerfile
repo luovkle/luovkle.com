@@ -8,7 +8,7 @@ COPY ["./app/templates/", "/css-builder/app/templates"]
 RUN pnpm build:css
 
 FROM python:3.12-slim-bookworm AS runner
-RUN apt-get update && apt-get install build-essential -y
+RUN apt-get update && apt-get install media-types build-essential -y
 RUN pip install pipenv
 WORKDIR /runner
 COPY ["./Pipfile", "./Pipfile.lock", "/runner/"]
