@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="w-[768px] mx-auto divide-y">
+  <div class="px-5 sm:px-10 md:w-[768px] mx-auto divide-y">
     <div class="py-24">
       <ul class="flex gap-2">
         <li>
@@ -22,21 +22,19 @@
       {% if posts %}
         <ul class="mt-12 mb-3 space-y-3 flex flex-col items-center">
           {% for post in posts %}
-            <li class="w-[768px]">
+            <li class="md:max-w-[768px] sm:max-h-[282px]">
               <a href="{{ url_for('views.post_detail', slug=post.slug) }}"
-                 class="flex bg-neutral-900 rounded-3xl overflow-hidden">
+                 class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
                 <img src="{{ url_for('static', filename=post.cover_image) }}"
                      alt="banner"
-                     width="450"
-                     height="300"
-                     class="w-3/5" />
-                <div class="h-auto w-2/5 m-8 flex flex-col justify-between">
+                     class="sm:w-3/5" />
+                <div class="h-[148px] sm:h-auto sm:w-2/5 m-8 flex flex-col justify-between">
                   <div class="space-y-2">
                     <div class="space-x-2">
                       <span class="bg-neutral-800 px-2 py-1 rounded-full text-sm">{{ post.reading_time }}</span>
                       <span>{{ post.topic }}</span>
                     </div>
-                    <h2 class="font-extrabold text-2xl">{{ post.title }}</h2>
+                    <h2 class="font-extrabold text-2xl line-clamp-3 md:line-clamp-4">{{ post.title }}</h2>
                   </div>
                   <span class="flex justify-end text-sm text-neutral-400">{{ post.date }}</span>
                 </div>
