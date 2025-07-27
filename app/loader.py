@@ -173,12 +173,12 @@ def get_homepage_data(posts_data, projects_data):
         "posts_section": {
             "description": data["posts_section_description"],
             "entries": str(len(posts_data)),
-            "cover_image": get_cover("posts")["thumbnail"],
+            "thumbnail": get_cover("posts")["thumbnail"],
         },
         "projects_section": {
             "description": data["projects_section_description"],
             "entries": str(len(projects_data)),
-            "cover_image": get_cover("projects")["thumbnail"],
+            "thumbnail": get_cover("projects")["thumbnail"],
         },
     }
 

@@ -19,7 +19,7 @@
         <li class="md:max-w-[768px] sm:max-h-[282px]">
           <a href="{{ url_for('views.post_list') }}"
              class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
-            <img src="{{ url_for('static', filename=homepage.posts_section.cover_image) }}"
+            <img src="{{ url_for('static', filename=homepage.posts_section.thumbnail) }}"
                  alt="banner"
                  class="sm:w-3/5" />
             <div class="h-[148px] sm:h-auto sm:w-2/5 m-8">
@@ -38,7 +38,7 @@
         <li class="md:max-w-[768px] sm:max-h-[282px]">
           <a href="{{ url_for('views.project_list') }}"
              class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
-            <img src="{{ url_for('static', filename=homepage.projects_section.cover_image) }}"
+            <img src="{{ url_for('static', filename=homepage.projects_section.thumbnail) }}"
                  alt="banner"
                  class="sm:w-3/5" />
             <div class="h-[148px] sm:h-auto sm:w-2/5 m-8">

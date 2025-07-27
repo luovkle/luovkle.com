@@ -25,7 +25,7 @@
             <li class="md:max-w-[768px] sm:max-h-[282px]">
               <a href="{{ url_for('views.project_detail', slug=project.slug) }}"
                  class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
-                <img src="{{ url_for('static', filename=project.cover_image) }}"
+                <img src="{{ url_for('static', filename=project.thumbnail) }}"
                      alt="banner"
                      class="sm:w-3/5" />
                 <div class="h-[148px] sm:h-auto sm:w-2/5 m-8 flex flex-col justify-between">
