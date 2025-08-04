@@ -1,7 +1,8 @@
 {
   "scripts": {
     "dev:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --watch",
-    "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --minify"
+    "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --minify",
+    "build:highlight": "sh ./scripts/build_highlight.sh"
   },
   "devDependencies": {
     "highlight.js": "^11.11.1",

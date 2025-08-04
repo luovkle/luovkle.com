@@ -81,7 +81,7 @@ def get_data_from_markdown_file(file_path):
     else:
         raise ValueError("Could not find the metadata in the markdown file")
     metadata_dict = yaml.safe_load(metadata)
-    html_body = markdown.markdown(body)
+    html_body = markdown.markdown(body, extensions=["extra"])
     return {**metadata_dict, "content": html_body}
 
 

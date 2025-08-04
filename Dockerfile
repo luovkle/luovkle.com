@@ -3,9 +3,11 @@ RUN yarn global add pnpm
 WORKDIR /css-builder/
 COPY ["./package.json", "./pnpm-lock.yaml", "/css-builder/"]
 RUN pnpm i --frozen-lockfile
+COPY ["./scripts/build_highlight.sh", "/css-builder/scripts/build_highlight.sh"]
 COPY ["./app/assets/", "/css-builder/app/assets/"]
 COPY ["./app/templates/", "/css-builder/app/templates"]
 RUN pnpm build:css
+RUN pnpm build:highlight
 
 FROM python:3.12-slim-bookworm AS runner
 RUN apt-get update && apt-get install media-types build-essential -y
@@ -16,7 +18,12 @@ RUN pipenv install
 RUN apt-get remove build-essential -y && apt-get autoremove -y
 COPY ["./app/", "/runner/app/"]
 COPY --from=css-builder \
-  ["/css-builder/app/static/css/styles.css", "/runner/app/static/css/"]
+  ["/css-builder/app/static/css/styles.css", \
+   "/css-builder/app/static/css/highlight.css" \
+   "/runner/app/static/css/"]
+COPY --from=css-builder \
+  ["/css-builder/app/static/js/highlight.js", \
+   "/runner/app/static/js/"]
 COPY ["./content/", "/runner/content/"]
 EXPOSE 80
 CMD ["pipenv", "run", "prod"]
