@@ -8,6 +8,7 @@ flask = "*"
 markdown = "*"
 pyyaml = "*"
 uwsgi = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 djlint = "*"
