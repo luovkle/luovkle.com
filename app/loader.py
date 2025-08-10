@@ -5,6 +5,7 @@ from pathlib import Path
 
 import markdown
 import yaml
+from bs4 import BeautifulSoup
 from flask import url_for
 
 content_paths = {
@@ -71,6 +72,16 @@ def copy_pictures_to_static_dir(picture_content_path):
     return str(Path(*picture_static_path.parts[-3:]))
 
 
+def update_anchor_tags(html):
+    soup = BeautifulSoup(html, "html.parser")
+    tags = soup.find_all("a")
+    for tag in tags:
+        tag.attrs["class"] = "text-sky-500 font-bold"  # type: ignore
+        tag.attrs["target"] = "_blank"  # type: ignore
+        tag.attrs["rel"] = "noopener noreferrer"  # type: ignore
+    return str(soup)
+
+
 def get_data_from_markdown_file(file_path):
     content = file_path.read_text(encoding="utf-8")
     metadata_pattern = r"^---\s*\n(.*?)\n---\s*\n(.*)$"
@@ -82,7 +93,8 @@ def get_data_from_markdown_file(file_path):
         raise ValueError("Could not find the metadata in the markdown file")
     metadata_dict = yaml.safe_load(metadata)
     html_body = markdown.markdown(body, extensions=["extra"])
-    return {**metadata_dict, "content": html_body}
+    updated_html = update_anchor_tags(html_body)
+    return {**metadata_dict, "content": updated_html}
 
 
 def get_meta_data():
