@@ -1,0 +1,7 @@
+services:
+  luovkle.com:
+    container_name: luovkle.com
+    build: .
+    ports:
+      - 80:80
+    restart: always
