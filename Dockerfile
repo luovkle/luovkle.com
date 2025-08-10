@@ -18,12 +18,9 @@ RUN pipenv install
 RUN apt-get remove build-essential -y && apt-get autoremove -y
 COPY ["./app/", "/runner/app/"]
 COPY --from=css-builder \
-  ["/css-builder/app/static/css/styles.css", \
-   "/css-builder/app/static/css/highlight.css" \
-   "/runner/app/static/css/"]
+  ["/css-builder/app/static/css/", "/runner/app/static/css/"]
 COPY --from=css-builder \
-  ["/css-builder/app/static/js/highlight.js", \
-   "/runner/app/static/js/"]
+  ["/css-builder/app/static/js/", "/runner/app/static/js/"]
 COPY ["./content/", "/runner/content/"]
 EXPOSE 80
 CMD ["pipenv", "run", "prod"]
