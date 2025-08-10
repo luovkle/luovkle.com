@@ -72,14 +72,20 @@ def copy_pictures_to_static_dir(picture_content_path):
     return str(Path(*picture_static_path.parts[-3:]))
 
 
-def update_anchor_tags(html):
+def update_base_html(html):
     soup = BeautifulSoup(html, "html.parser")
+    extras = {"code": False}
+    # Check for <code> tags
+    code_blocks = soup.find_all("code")
+    if len(code_blocks) >= 1:
+        extras["code"] = True
+    # Update anchor tags
     tags = soup.find_all("a")
     for tag in tags:
         tag.attrs["class"] = "text-sky-500 font-bold"  # type: ignore
         tag.attrs["target"] = "_blank"  # type: ignore
         tag.attrs["rel"] = "noopener noreferrer"  # type: ignore
-    return str(soup)
+    return {"content": str(soup), "extras": extras}
 
 
 def get_data_from_markdown_file(file_path):
@@ -93,8 +99,12 @@ def get_data_from_markdown_file(file_path):
         raise ValueError("Could not find the metadata in the markdown file")
     metadata_dict = yaml.safe_load(metadata)
     html_body = markdown.markdown(body, extensions=["extra"])
-    updated_html = update_anchor_tags(html_body)
-    return {**metadata_dict, "content": updated_html}
+    updated_html = update_base_html(html_body)
+    return {
+        **metadata_dict,
+        "content": updated_html["content"],
+        "extras": updated_html["extras"],
+    }
 
 
 def get_meta_data():

@@ -58,6 +58,11 @@
 {% endblock content %}
 
 {% block scripts %}
+  {% if post.extras.code %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/highlight.css') }}" />
+    <script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+  {% endif %}
   <script type="text/javascript">
     const copyLink = () => {
       navigator.clipboard.writeText(
