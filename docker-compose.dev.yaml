@@ -1,0 +1,24 @@
+services:
+  luovkle.com:
+    container_name: luovkle.com
+    build:
+      context: .
+      target: runner
+    ports:
+      - 80:4000
+    restart: always
+    command: "pipenv run dev:container"
+    volumes:
+      - ./app/:/runner/app/:z
+      - ./content/:/runner/content/:z
+      - ./scripts/:/runner/scripts/:z
+  styles:
+    container_name: styles
+    build:
+      context: .
+      target: css-builder
+    restart: always
+    command: "pnpm run dev:container"
+    volumes:
+      - ./app/:/css-builder/app/:z
+      - ./scripts/:/css-builder/scripts/:z
