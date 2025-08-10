@@ -20,7 +20,7 @@ flake8 = "*"
 python_version = "3.12"
 
 [scripts]
-dev = "flask run --debug --port 4000"
+dev = "sh ./scripts/dev_server.sh"
 prod = "uwsgi --http :80 --static-map /static=app/static --master -w app.wsgi:app"
 format = "sh ./scripts/format.sh"
 lint = "sh ./scripts/lint.sh"
