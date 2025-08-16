@@ -23,7 +23,7 @@ python_version = "3.12"
 [scripts]
 dev = "sh ./scripts/dev_server.sh"
 "dev:container" = "sh ./scripts/dev_server_container.sh"
-prod = "uwsgi --http :80 --static-map /static=app/static --master -w app.wsgi:app"
+prod = "uwsgi --ini ./uwsgi.ini"
 format = "sh ./scripts/format.sh"
 lint = "sh ./scripts/lint.sh"
 "dev:css" = "pnpm run dev:css"

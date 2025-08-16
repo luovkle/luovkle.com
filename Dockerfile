@@ -16,6 +16,7 @@ WORKDIR /runner
 COPY ["./Pipfile", "./Pipfile.lock", "/runner/"]
 RUN pipenv install
 RUN apt-get remove build-essential -y && apt-get autoremove -y
+COPY ["./uwsgi.ini", "/runner/"]
 COPY ["./app/", "/runner/app/"]
 COPY --from=css-builder \
   ["/css-builder/app/static/css/", "/runner/app/static/css/"]
