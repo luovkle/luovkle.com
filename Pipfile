@@ -10,6 +10,7 @@ pyyaml = "*"
 uwsgi = "*"
 beautifulsoup4 = "*"
 whitenoise = "*"
+brotli = "*"
 
 [dev-packages]
 djlint = "*"
