@@ -9,6 +9,7 @@ markdown = "*"
 pyyaml = "*"
 uwsgi = "*"
 beautifulsoup4 = "*"
+whitenoise = "*"
 
 [dev-packages]
 djlint = "*"
