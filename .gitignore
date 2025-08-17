@@ -297,3 +297,5 @@ app/static/css/styles.css
 app/static/images/author/
 app/static/css/highlight.css
 app/static/js/highlight.js
+app/static/**/*.gz
+app/static/**/*.br

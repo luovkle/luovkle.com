@@ -1,0 +1,3 @@
+# Static
+app/static/**/*.gz
+app/static/**/*.br

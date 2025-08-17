@@ -10,6 +10,7 @@ RUN pnpm build:css
 RUN pnpm build:highlight
 
 FROM python:3.12-slim-bookworm AS runner
+ENV PIPENV_VENV_IN_PROJECT=1
 RUN apt-get update && apt-get install media-types build-essential -y
 RUN pip install pipenv
 WORKDIR /runner
@@ -22,6 +23,7 @@ COPY --from=css-builder \
   ["/css-builder/app/static/css/", "/runner/app/static/css/"]
 COPY --from=css-builder \
   ["/css-builder/app/static/js/", "/runner/app/static/js/"]
+RUN /runner/.venv/bin/python -m whitenoise.compress /runner/app/static/
 COPY ["./content/", "/runner/content/"]
 EXPOSE 80
 CMD ["pipenv", "run", "prod"]
