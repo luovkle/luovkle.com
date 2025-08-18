@@ -1,11 +1,13 @@
 from flask import Blueprint, abort, render_template
 
 from .content import get_content
+from .extensions import cache
 
 bp = Blueprint("views", __name__)
 
 
 @bp.route("/")
+@cache.cached()
 def home():
     content = get_content()
     return render_template(
@@ -17,6 +19,7 @@ def home():
 
 
 @bp.route("/p")
+@cache.cached()
 def post_list():
     content = get_content()
     context = list(content["posts"].values())
@@ -24,6 +27,7 @@ def post_list():
 
 
 @bp.route("/p/<slug>")
+@cache.cached()
 def post_detail(slug):
     content = get_content()
     post = content["posts"].get(slug)
@@ -33,6 +37,7 @@ def post_detail(slug):
 
 
 @bp.route("/pr")
+@cache.cached()
 def project_list():
     content = get_content()
     context = list(content["projects"].values())
@@ -40,6 +45,7 @@ def project_list():
 
 
 @bp.route("/pr/<slug>")
+@cache.cached()
 def project_detail(slug):
     content = get_content()
     project = content["projects"].get(slug)
@@ -49,6 +55,7 @@ def project_detail(slug):
 
 
 @bp.route("/author")
+@cache.cached()
 def author():
     content = get_content()
     author = content["author"]
