@@ -12,6 +12,7 @@ beautifulsoup4 = "*"
 whitenoise = "*"
 brotli = "*"
 flask-compress = "*"
+flask-caching = "*"
 
 [dev-packages]
 djlint = "*"
