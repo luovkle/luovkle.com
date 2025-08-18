@@ -59,9 +59,11 @@
 
 {% block scripts %}
   {% if post.extras.code %}
-    <link rel="stylesheet"
+    <link rel="preload"
+          as="style"
+          onload="this.onload=null;this.rel='stylesheet'"
           href="{{ url_for('static', filename='css/highlight.css') }}" />
-    <script src="{{ url_for('static', filename='js/highlight.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/highlight.js') }}" defer></script>
   {% endif %}
   <script type="text/javascript">
     const copyLink = () => {
