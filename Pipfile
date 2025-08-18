@@ -11,6 +11,7 @@ uwsgi = "*"
 beautifulsoup4 = "*"
 whitenoise = "*"
 brotli = "*"
+flask-compress = "*"
 
 [dev-packages]
 djlint = "*"
