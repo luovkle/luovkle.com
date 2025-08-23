@@ -299,3 +299,6 @@ app/static/css/highlight.css
 app/static/js/highlight.js
 app/static/**/*.gz
 app/static/**/*.br
+
+# Content
+content/**/test_*
