@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from flask import url_for
 
 content_paths = {
-    "author": "content/author/author.md",
+    "author": "content/author/index.md",
     "posts": "content/posts",
     "projects": "content/projects",
     "homepage": "content/homepage.md",
