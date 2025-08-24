@@ -8,6 +8,8 @@ import yaml
 from bs4 import BeautifulSoup
 from flask import url_for
 
+from .schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
+
 content_paths = {
     "author": "content/author/index.md",
     "posts": "content/posts",
@@ -98,6 +100,8 @@ def get_data_from_markdown_file(file_path):
     else:
         raise ValueError("Could not find the metadata in the markdown file")
     metadata_dict = yaml.safe_load(metadata)
+    if not metadata_dict:
+        raise KeyError("No properties found in metadata")
     html_body = markdown.markdown(body, extensions=["extra"])
     updated_html = update_base_html(html_body)
     return {
@@ -109,54 +113,42 @@ def get_data_from_markdown_file(file_path):
 
 def get_meta_data():
     meta_path = Path(content_paths["meta"])
-    meta_data = get_data_from_markdown_file(meta_path)
-    default_image = get_cover(meta_data["author"])
+    content_md = get_data_from_markdown_file(meta_path)
+    metadata_md = MetadataMD(**content_md)
+    default_image = get_cover(metadata_md.author)
     default_image_url = url_for(
         "static", filename=default_image["thumbnail"], _external=True
     )
     return {
-        "description": meta_data["description"],
-        "keywords": ", ".join(meta_data["keywords"]),
-        "author": meta_data["author"],
-        "language": ", ".join(meta_data["language"]),
-        "robots": ", ".join(meta_data["robots"]),
-        "og": {
-            "title": meta_data["og:title"],
-            "description": meta_data["og:description"],
-            "image": meta_data.get("og:image") or default_image_url,
-            "url": meta_data["og:url"],
-            "type": meta_data["og:type"],
-            "locale": meta_data["og:locale"],
-        },
-        "twitter": {
-            "card": meta_data["twitter:card"],
-            "title": meta_data["twitter:title"],
-            "description": meta_data["twitter:description"],
-            "image": meta_data.get("twitter:image") or default_image_url,
-            "creator": meta_data["twitter:creator"],
-        },
+        **metadata_md.model_dump(),
+        "og_image": metadata_md.og_image or default_image_url,
+        "twitter_image": metadata_md.twitter_image or default_image_url,
     }
 
 
 def get_author_data():
     path = Path(content_paths["author"])
-    data = get_data_from_markdown_file(path)
-    picture_content_path = Path(f"content/author/{data['picture']}")
-    data["picture"] = copy_pictures_to_static_dir(picture_content_path)
-    return data
+    content_md = get_data_from_markdown_file(path)
+    author_md = AuthorMD(**content_md)
+    picture_content_path = Path(f"content/author/{author_md.picture}")
+    return {
+        **author_md.model_dump(),
+        "picture": copy_pictures_to_static_dir(picture_content_path),
+    }
 
 
 def get_posts_data():
     def get_single_post_data(path):
-        data = get_data_from_markdown_file(path)
-        cover = get_cover(data["title"])
+        content_md = get_data_from_markdown_file(path)
+        post_md = PostMD(**content_md)
+        cover = get_cover(post_md.title)
         return {
-            **data,
-            "slug": data.get("slug") or get_slug(path),
+            **post_md.model_dump(),
+            "slug": post_md.slug or get_slug(path),
             "cover_image": cover["header"],
             "thumbnail": cover["thumbnail"],
-            "reading_time": get_reading_time(data["content"]),
-            "date": data.get("date") or get_creation_date(path),
+            "reading_time": get_reading_time(post_md.content),
+            "date": post_md.date or get_creation_date(path),
         }
 
     posts = {}
@@ -169,15 +161,16 @@ def get_posts_data():
 
 def get_projects_data():
     def get_single_project_data(path):
-        data = get_data_from_markdown_file(path)
-        cover = get_cover(data["title"])
+        content_md = get_data_from_markdown_file(path)
+        project_md = ProjectMD(**content_md)
+        cover = get_cover(project_md.title)
         return {
-            **data,
-            "slug": data.get("slug") or get_slug(path),
+            **project_md.model_dump(),
+            "slug": project_md.slug or get_slug(path),
             "cover_image": cover["header"],
             "thumbnail": cover["thumbnail"],
-            "reading_time": get_reading_time(data["content"]),
-            "date": data.get("date") or get_creation_date(path),
+            "reading_time": get_reading_time(project_md.content),
+            "date": project_md.date or get_creation_date(path),
         }
 
     projects = {}
@@ -190,15 +183,16 @@ def get_projects_data():
 
 def get_homepage_data(posts_data, projects_data):
     path = Path(content_paths["homepage"])
-    data = get_data_from_markdown_file(path)
+    content_md = get_data_from_markdown_file(path)
+    homepage_md = HomepageMD(**content_md)
     return {
         "posts_section": {
-            "description": data["posts_section_description"],
+            "description": homepage_md.posts_section_description,
             "entries": str(len(posts_data)),
             "thumbnail": get_cover("posts")["thumbnail"],
         },
         "projects_section": {
-            "description": data["projects_section_description"],
+            "description": homepage_md.projects_section_description,
             "entries": str(len(projects_data)),
             "thumbnail": get_cover("projects")["thumbnail"],
         },
