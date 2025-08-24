@@ -205,7 +205,7 @@ def get_homepage_data(posts_data, projects_data):
     }
 
 
-def get_content_data():
+def get_content():
     data = {
         "meta": get_meta_data(),
         "author": get_author_data(),

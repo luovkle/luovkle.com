@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from whitenoise import WhiteNoise
 
 from .extensions import cache, compress
+from .loader import get_content
 from .views import bp as views_bp
 
 
@@ -27,4 +28,7 @@ def create_app():
     app.wsgi_app = WhiteNoise(app.wsgi_app, root="app/static/", prefix="static/")
     cache.init_app(app)
     compress.init_app(app)
+    # Load and cache the contents of Markdown files
+    with app.test_request_context("/"):
+        cache.set("content", get_content())
     return app
