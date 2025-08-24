@@ -51,7 +51,7 @@
             </div>
           </div>
         </div>
-        <div class="text-lg space-y-10">{{ post.content|safe }}</div>
+        {% if post.content %}<div class="text-lg space-y-10">{{ post.content|safe }}</div>{% endif %}
       </div>
     </div>
   </div>

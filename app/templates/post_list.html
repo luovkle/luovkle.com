@@ -32,7 +32,7 @@
                   <div class="space-y-2">
                     <div class="space-x-2">
                       <span class="bg-neutral-800 px-2 py-1 rounded-full text-sm">{{ post.reading_time }}</span>
-                      <span>{{ post.topic }}</span>
+                      {% if post.topic %}<span>{{ post.topic }}</span>{% endif %}
                     </div>
                     <h2 class="font-extrabold text-2xl line-clamp-3 md:line-clamp-4 w-[211.2px]">{{ post.title }}</h2>
                   </div>

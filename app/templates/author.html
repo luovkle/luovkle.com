@@ -32,24 +32,28 @@
         </div>
       </div>
       <ul class="flex flex-col sm:justify-center gap-4">
-        <li class="w-full sm:w-[256px]">
-          <a href="{{ author.github_url }}"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full flex justify-center md:items-center gap-2">
-            {% include "icons/github-fill.svg" %}
-            Github
-          </a>
-        </li>
-        <li class="w-full sm:w-[256px]">
-          <a href="{{ author.linkedin_url }}"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full flex justify-center md:items-center gap-2">
-            {% include "icons/linkedin-box-fill.svg" %}
-            Linkedin
-          </a>
-        </li>
+        {% if author.github_url %}
+          <li class="w-full sm:w-[256px]">
+            <a href="{{ author.github_url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full flex justify-center md:items-center gap-2">
+              {% include "icons/github-fill.svg" %}
+              Github
+            </a>
+          </li>
+        {% endif %}
+        {% if author.linkedin_url %}
+          <li class="w-full sm:w-[256px]">
+            <a href="{{ author.linkedin_url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="py-2 px-6 border border-neutral-200 hover:border-neutral-400 hover:text-neutral-400 rounded-full flex justify-center md:items-center gap-2">
+              {% include "icons/linkedin-box-fill.svg" %}
+              Linkedin
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </div>
