@@ -6,7 +6,6 @@ from pathlib import Path
 import markdown
 import yaml
 from bs4 import BeautifulSoup
-from flask import url_for
 
 from .schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
 
@@ -115,14 +114,11 @@ def get_meta_data():
     meta_path = Path(content_paths["meta"])
     content_md = get_data_from_markdown_file(meta_path)
     metadata_md = MetadataMD(**content_md)
-    default_image = get_cover(metadata_md.author)
-    default_image_url = url_for(
-        "static", filename=default_image["thumbnail"], _external=True
-    )
+    default_thumbnail = get_cover(metadata_md.author)["thumbnail"]
     return {
         **metadata_md.model_dump(),
-        "og_image": metadata_md.og_image or default_image_url,
-        "twitter_image": metadata_md.twitter_image or default_image_url,
+        "og_image": metadata_md.og_image or default_thumbnail,
+        "twitter_image": metadata_md.twitter_image or default_thumbnail,
     }
 
 
