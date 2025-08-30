@@ -7,4 +7,4 @@ autoflake --in-place .
 black .
 isort .
 djlint --profile=jinja --reformat --quiet --indent 2 --preserve-blank-lines \
-  --close-void-tags app/templates/
+  --close-void-tags --max-line-length 88 app/templates/
