@@ -1,6 +1,7 @@
 from flask import Blueprint, abort, render_template
 
 from .extensions import cache
+from .loader import get_content
 
 bp = Blueprint("views", __name__)
 
@@ -8,7 +9,7 @@ bp = Blueprint("views", __name__)
 @bp.route("/")
 @cache.cached()
 def home():
-    content = cache.get("content")
+    content = get_content()
     return render_template(
         "homepage.html",
         meta=content["meta"],
@@ -20,7 +21,7 @@ def home():
 @bp.route("/p")
 @cache.cached()
 def post_list():
-    content = cache.get("content")
+    content = get_content()
     context = list(content["posts"].values())
     return render_template("post_list.html", meta=content["meta"], posts=context)
 
@@ -28,7 +29,7 @@ def post_list():
 @bp.route("/p/<slug>")
 @cache.cached()
 def post_detail(slug):
-    content = cache.get("content")
+    content = get_content()
     post = content["posts"].get(slug)
     if not post:
         abort(404)
@@ -38,7 +39,7 @@ def post_detail(slug):
 @bp.route("/pr")
 @cache.cached()
 def project_list():
-    content = cache.get("content")
+    content = get_content()
     context = list(content["projects"].values())
     return render_template("project_list.html", meta=content["meta"], projects=context)
 
@@ -46,7 +47,7 @@ def project_list():
 @bp.route("/pr/<slug>")
 @cache.cached()
 def project_detail(slug):
-    content = cache.get("content")
+    content = get_content()
     project = content["projects"].get(slug)
     if not project:
         abort(404)
@@ -56,6 +57,6 @@ def project_detail(slug):
 @bp.route("/author")
 @cache.cached()
 def author():
-    content = cache.get("content")
+    content = get_content()
     author = content["author"]
     return render_template("author.html", meta=content["meta"], author=author)

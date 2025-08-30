@@ -28,7 +28,5 @@ def create_app():
     app.wsgi_app = WhiteNoise(app.wsgi_app, root="app/static/", prefix="static/")
     cache.init_app(app)
     compress.init_app(app)
-    # Load and cache the contents of Markdown files
-    with app.test_request_context("/"):
-        cache.set("content", get_content())
+    get_content()  # Load and cache the contents of Markdown files
     return app

@@ -1,6 +1,7 @@
 import os
 import re
 from datetime import datetime
+from functools import cache
 from pathlib import Path
 
 import markdown
@@ -195,6 +196,7 @@ def get_homepage_data(posts_data, projects_data):
     }
 
 
+@cache
 def get_content():
     data = {
         "meta": get_meta_data(),
