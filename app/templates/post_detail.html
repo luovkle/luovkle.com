@@ -24,7 +24,9 @@
               <li class="text-neutral-400">/</li>
               <li class="line-clamp-1">{{ post.title }}</li>
             </ul>
-            <h1 class="font-black text-5xl md:w-4/5 line-clamp-4 leading-tight">{{ post.title }}</h1>
+            <h1 class="font-black text-5xl md:w-4/5 line-clamp-4 leading-tight">
+              {{ post.title }}
+            </h1>
           </div>
         </div>
       </div>
@@ -51,7 +53,9 @@
             </div>
           </div>
         </div>
-        {% if post.content %}<div class="text-lg space-y-10">{{ post.content|safe }}</div>{% endif %}
+        {% if post.content %}
+          <div class="text-lg space-y-10">{{ post.content|safe }}</div>
+        {% endif %}
       </div>
     </div>
   </div>
