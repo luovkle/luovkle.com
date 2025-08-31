@@ -111,7 +111,7 @@ def get_data_from_markdown_file(file_path):
     }
 
 
-def get_meta_data():
+def get_metadata_content():
     meta_path = Path(content_paths["meta"])
     content_md = get_data_from_markdown_file(meta_path)
     metadata_md = MetadataMD(**content_md)
@@ -123,7 +123,7 @@ def get_meta_data():
     }
 
 
-def get_author_data():
+def get_author_content():
     path = Path(content_paths["author"])
     content_md = get_data_from_markdown_file(path)
     author_md = AuthorMD(**content_md)
@@ -134,7 +134,7 @@ def get_author_data():
     }
 
 
-def get_posts_data():
+def get_posts_content():
     def get_single_post_data(path):
         content_md = get_data_from_markdown_file(path)
         post_md = PostMD(**content_md)
@@ -156,7 +156,7 @@ def get_posts_data():
     return posts
 
 
-def get_projects_data():
+def get_projects_content():
     def get_single_project_data(path):
         content_md = get_data_from_markdown_file(path)
         project_md = ProjectMD(**content_md)
@@ -199,10 +199,10 @@ def get_homepage_data(posts_data, projects_data):
 @cache
 def get_content():
     data = {
-        "meta": get_meta_data(),
-        "author": get_author_data(),
-        "posts": get_posts_data(),
-        "projects": get_projects_data(),
+        "metadata": get_metadata_content(),
+        "author": get_author_content(),
+        "posts": get_posts_content(),
+        "projects": get_projects_content(),
     }
     data["homepage"] = get_homepage_data(data["posts"], data["projects"])
     return data

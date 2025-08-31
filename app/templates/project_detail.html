@@ -1,4 +1,18 @@
-{% extends "base.html" %}
+{% extends "layout/base.html" %}
+
+{% from "includes/meta.html" import meta with context %}
+
+{% block meta %}
+  {{ meta(og_title=project.title,
+    og_description=project.description,
+    og_image=project.thumbnail,
+    og_url=url_for('views.project_detail', slug=project.slug, _external=True) ,
+  twitter_title=project.title,
+  twitter_description=project.description,
+  twitter_image=project.thumbnail,
+  )
+  }}
+{% endblock meta %}
 
 {% block title %}
   {{ project.title }}

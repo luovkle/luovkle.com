@@ -1,22 +1,15 @@
-from flask import Flask, render_template
+from flask import Flask
 from whitenoise import WhiteNoise
 
 from .extensions import cache, compress
 from .loader import get_content
 from .views import bp as views_bp
+from .views import internal_server_error, page_not_found
 
 
 class Config:
     CACHE_TYPE = "SimpleCache"
     CACHE_DEFAULT_TIMEOUT = 60 * 60  # 1 hour
-
-
-def page_not_found(_):
-    return render_template("404.html"), 404
-
-
-def internal_server_error(_):
-    return render_template("500.html"), 500
 
 
 def create_app():

@@ -1,4 +1,10 @@
-{% extends "base.html" %}
+{% extends "layout/base.html" %}
+
+{% from "includes/meta.html" import meta with context %}
+
+{% block meta %}
+  {{ meta() }}
+{% endblock meta %}
 
 {% block title %}
   Revelations

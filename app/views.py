@@ -12,7 +12,7 @@ def home():
     content = get_content()
     return render_template(
         "homepage.html",
-        meta=content["meta"],
+        metadata=content["metadata"],
         author=content["author"],
         homepage=content["homepage"],
     )
@@ -23,7 +23,9 @@ def home():
 def post_list():
     content = get_content()
     context = list(content["posts"].values())
-    return render_template("post_list.html", meta=content["meta"], posts=context)
+    return render_template(
+        "post_list.html", metadata=content["metadata"], posts=context
+    )
 
 
 @bp.route("/p/<slug>")
@@ -33,7 +35,7 @@ def post_detail(slug):
     post = content["posts"].get(slug)
     if not post:
         abort(404)
-    return render_template("post_detail.html", meta=content["meta"], post=post)
+    return render_template("post_detail.html", metadata=content["metadata"], post=post)
 
 
 @bp.route("/pr")
@@ -41,7 +43,9 @@ def post_detail(slug):
 def project_list():
     content = get_content()
     context = list(content["projects"].values())
-    return render_template("project_list.html", meta=content["meta"], projects=context)
+    return render_template(
+        "project_list.html", metadata=content["metadata"], projects=context
+    )
 
 
 @bp.route("/pr/<slug>")
@@ -51,7 +55,9 @@ def project_detail(slug):
     project = content["projects"].get(slug)
     if not project:
         abort(404)
-    return render_template("project_detail.html", meta=content["meta"], project=project)
+    return render_template(
+        "project_detail.html", metadata=content["metadata"], project=project
+    )
 
 
 @bp.route("/author")
@@ -59,4 +65,16 @@ def project_detail(slug):
 def author():
     content = get_content()
     author = content["author"]
-    return render_template("author.html", meta=content["meta"], author=author)
+    return render_template("author.html", metadata=content["metadata"], author=author)
+
+
+@cache.cached()
+def page_not_found(_):
+    content = get_content()
+    return render_template("404.html", metadata=content["metadata"]), 404
+
+
+@cache.cached()
+def internal_server_error(_):
+    content = get_content()
+    return render_template("500.html", metadata=content["metadata"]), 500
