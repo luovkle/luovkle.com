@@ -9,7 +9,7 @@ COPY ["./app/templates/", "/css-builder/app/templates"]
 RUN pnpm build:css
 RUN pnpm build:highlight
 
-FROM python:3.12-slim-bookworm AS runner
+FROM python:3.13-slim-trixie AS runner
 ENV PIPENV_VENV_IN_PROJECT=1
 RUN apt-get update && apt-get install media-types build-essential -y
 RUN pip install pipenv

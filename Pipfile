@@ -23,7 +23,7 @@ autoflake = "*"
 flake8 = "*"
 
 [requires]
-python_version = "3.12"
+python_version = "3.13"
 
 [scripts]
 dev = "sh ./scripts/dev_server.sh"
