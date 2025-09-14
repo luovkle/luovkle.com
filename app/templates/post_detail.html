@@ -3,7 +3,15 @@
 {% from "includes/meta.html" import meta with context %}
 
 {% block meta %}
-  {{ meta() }}
+  {{ meta(og_title=post.title,
+    og_description=post.description,
+    og_image=post.thumbnail,
+    og_url=url_for('views.post_detail', slug=post.slug, _external=True) ,
+  twitter_title=post.title,
+  twitter_description=post.description,
+  twitter_image=post.thumbnail,
+  )
+  }}
 {% endblock meta %}
 
 {% block title %}

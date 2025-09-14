@@ -60,6 +60,7 @@ class AuthorMD(Content):
 
 class PostMD(Content):
     title: str
+    description: str | None = None
     slug: str | None = None
     date: str | None = None
     topic: str | None = None
