@@ -15,6 +15,9 @@ flask-compress = "*"
 flask-caching = "*"
 pydantic = "*"
 
+[build-packages]
+pillow = "*"
+
 [dev-packages]
 djlint = "*"
 black = "*"
