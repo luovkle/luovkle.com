@@ -1,4 +1,4 @@
-FROM node:22-alpine3.20 AS css-builder
+FROM node:22-trixie-slim AS css-builder
 RUN yarn global add pnpm
 WORKDIR /css-builder/
 COPY ["./package.json", "./pnpm-lock.yaml", "/css-builder/"]
