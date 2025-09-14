@@ -52,24 +52,36 @@ def get_avif_output_paths(input_paths: list[Path]) -> list[Path]:
     return output_paths
 
 
-def img_to_webp(input_path: Path, output_path: Path) -> None:
+def img_to_webp(
+    input_path: Path, output_path: Path, force_overwrite: bool = False
+) -> None:
     """Convert an image to lossless WebP format.
 
     Args:
         input_path (Path): Path to the source image.
         output_path (Path): Destination path for the WebP file.
+        force_overwrite (bool, optional): If True, overwrite the output file even if it
+            already exists. Defaults to False.
     """
+    if not force_overwrite and output_path.exists():
+        return None
     img = Image.open(input_path).convert("RGBA")
     img.save(output_path, format="WEBP", lossless=True)
 
 
-def img_to_avif(input_path: Path, output_path: Path) -> None:
+def img_to_avif(
+    input_path: Path, output_path: Path, force_overwrite: bool = False
+) -> None:
     """Convert an image to AVIF format with high quality settings.
 
     Args:
         input_path (Path): Path to the source image.
         output_path (Path): Destination path for the AVIF file.
+        force_overwrite (bool, optional): If True, overwrite the output file even if it
+            already exists. Defaults to False.
     """
+    if not force_overwrite and output_path.exists():
+        return None
     img = Image.open(input_path).convert("RGBA")
     img.save(
         output_path,
