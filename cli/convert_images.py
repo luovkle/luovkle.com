@@ -53,7 +53,10 @@ def get_avif_output_paths(input_paths: list[Path]) -> list[Path]:
 
 
 def img_to_webp(
-    input_path: Path, output_path: Path, force_overwrite: bool = False
+    input_path: Path,
+    output_path: Path,
+    force_overwrite: bool = False,
+    save_if_smaller: bool = True,
 ) -> None:
     """Convert an image to lossless WebP format.
 
@@ -62,15 +65,25 @@ def img_to_webp(
         output_path (Path): Destination path for the WebP file.
         force_overwrite (bool, optional): If True, overwrite the output file even if it
             already exists. Defaults to False.
+        save_if_smaller (bool, optional): If True, keep the converted file only if its
+            size is smaller than the original.
     """
     if not force_overwrite and output_path.exists():
         return None
+    # Convert and save image as WebP
     img = Image.open(input_path).convert("RGBA")
     img.save(output_path, format="WEBP", lossless=True)
+    # Remove the converted file if it is not smaller than the original
+    if save_if_smaller:
+        if output_path.stat().st_size >= input_path.stat().st_size:
+            output_path.unlink()
 
 
 def img_to_avif(
-    input_path: Path, output_path: Path, force_overwrite: bool = False
+    input_path: Path,
+    output_path: Path,
+    force_overwrite: bool = False,
+    save_if_smaller: bool = True,
 ) -> None:
     """Convert an image to AVIF format with high quality settings.
 
@@ -79,9 +92,12 @@ def img_to_avif(
         output_path (Path): Destination path for the AVIF file.
         force_overwrite (bool, optional): If True, overwrite the output file even if it
             already exists. Defaults to False.
+        save_if_smaller (bool, optional): If True, keep the converted file only if its
+            size is smaller than the original.
     """
     if not force_overwrite and output_path.exists():
         return None
+    # Convert and save image as AVIF
     img = Image.open(input_path).convert("RGBA")
     img.save(
         output_path,
@@ -91,6 +107,10 @@ def img_to_avif(
         range="full",
         speed=4,
     )
+    # Remove the converted file if it is not smaller than the original
+    if save_if_smaller:
+        if output_path.stat().st_size >= input_path.stat().st_size:
+            output_path.unlink()
 
 
 async def run_blocking_tasks_in_threads(
