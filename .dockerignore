@@ -1,3 +1,5 @@
 # Static
 app/static/**/*.gz
 app/static/**/*.br
+app/static/images/**/*.webp
+app/static/images/**/*.avif

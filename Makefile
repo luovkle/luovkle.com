@@ -9,3 +9,6 @@ dev:
 
 dev-stop:
 	podman-compose -f ./docker-compose.dev.yaml down
+
+convert-images:
+	./.venv/bin/python ./cli/convert_images.py

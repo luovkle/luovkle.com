@@ -1,6 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% from "includes/meta.html" import meta with context %}
+{% from "includes/thumbnail.html" import thumbnail %}
 
 {% block meta %}
   {{ meta() }}
@@ -25,9 +26,7 @@
         <li class="md:max-w-[768px] sm:max-h-[282px]">
           <a href="{{ url_for('views.post_list') }}"
              class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
-            <img src="{{ url_for('static', filename=homepage.posts_section.thumbnail) }}"
-                 alt="banner"
-                 class="sm:w-3/5" />
+            {{ thumbnail(urls=homepage.projects_section.thumbnail) }}
             <div class="h-[148px] sm:h-auto sm:w-2/5 m-8">
               <div class="space-y-2">
                 <div>
@@ -46,9 +45,7 @@
         <li class="md:max-w-[768px] sm:max-h-[282px]">
           <a href="{{ url_for('views.project_list') }}"
              class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
-            <img src="{{ url_for('static', filename=homepage.projects_section.thumbnail) }}"
-                 alt="banner"
-                 class="sm:w-3/5" />
+            {{ thumbnail(urls=homepage.projects_section.thumbnail) }}
             <div class="h-[148px] sm:h-auto sm:w-2/5 m-8">
               <div class="space-y-2">
                 <div>

@@ -9,6 +9,16 @@ COPY ["./app/templates/", "/css-builder/app/templates"]
 RUN pnpm build:css
 RUN pnpm build:highlight
 
+FROM python:3.13-slim-trixie AS convert-images
+ENV PIPENV_VENV_IN_PROJECT=1
+RUN pip install pipenv
+WORKDIR /www/
+COPY ./Pipfile ./Pipfile.lock /www/
+RUN pipenv install --categories=build-packages
+COPY ./cli/convert_images.py /www/cli/
+COPY ./app/static/images/ /www/app/static/images/
+RUN /www/.venv/bin/python /www/cli/convert_images.py
+
 FROM python:3.13-slim-trixie AS runner
 ENV PIPENV_VENV_IN_PROJECT=1
 RUN apt-get update && apt-get install media-types build-essential -y
@@ -24,6 +34,7 @@ COPY --from=css-builder \
 COPY --from=css-builder \
   ["/css-builder/app/static/js/", "/runner/app/static/js/"]
 RUN /runner/.venv/bin/python -m whitenoise.compress /runner/app/static/
+COPY --from=convert-images /www/app/static/images/ /runner/app/static/images/
 COPY ["./content/", "/runner/content/"]
 EXPOSE 80
 CMD ["pipenv", "run", "prod"]
