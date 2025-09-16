@@ -14,6 +14,7 @@ brotli = "*"
 flask-compress = "*"
 flask-caching = "*"
 pydantic = "*"
+pygments = "*"
 
 [build-packages]
 pillow = "*"
