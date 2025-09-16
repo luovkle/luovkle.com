@@ -3,11 +3,9 @@ RUN yarn global add pnpm
 WORKDIR /css-builder/
 COPY ["./package.json", "./pnpm-lock.yaml", "/css-builder/"]
 RUN pnpm i --frozen-lockfile
-COPY ["./scripts/build_highlight.sh", "/css-builder/scripts/build_highlight.sh"]
 COPY ["./app/assets/", "/css-builder/app/assets/"]
 COPY ["./app/templates/", "/css-builder/app/templates"]
 RUN pnpm build:css
-RUN pnpm build:highlight
 
 FROM python:3.13-slim-trixie AS convert-images
 ENV PIPENV_VENV_IN_PROJECT=1
@@ -31,8 +29,8 @@ COPY ["./uwsgi.ini", "/runner/"]
 COPY ["./app/", "/runner/app/"]
 COPY --from=css-builder \
   ["/css-builder/app/static/css/", "/runner/app/static/css/"]
-COPY --from=css-builder \
-  ["/css-builder/app/static/js/", "/runner/app/static/js/"]
+RUN /runner/.venv/bin/pygmentize \
+  -S github-dark -f html -a .codehilite > /runner/app/static/css/highlight.css
 RUN /runner/.venv/bin/python -m whitenoise.compress /runner/app/static/
 COPY --from=convert-images /www/app/static/images/ /runner/app/static/images/
 COPY ["./content/", "/runner/content/"]

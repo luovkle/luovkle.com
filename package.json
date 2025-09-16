@@ -1,9 +1,8 @@
 {
   "scripts": {
     "dev:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --watch",
-    "dev:container": "sh ./scripts/css_server_container.sh",
-    "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --minify",
-    "build:highlight": "sh ./scripts/build_highlight.sh"
+    "dev:container": "tailwindcss -c app/assets/tailwind.config.js -i app/assets/input.css -o app/static/css/styles.css --watch=always",
+    "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --minify"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.13"

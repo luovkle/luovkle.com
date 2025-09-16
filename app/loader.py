@@ -131,7 +131,11 @@ def get_data_from_markdown_file(file_path):
     metadata_dict = yaml.safe_load(metadata)
     if not metadata_dict:
         raise KeyError("No properties found in metadata")
-    html_body = markdown.markdown(body, extensions=["extra"])
+    html_body = markdown.markdown(
+        body,
+        extensions=["fenced_code", "codehilite"],
+        output_format="html"
+    )
     updated_html = update_base_html(html_body)
     return {
         **metadata_dict,
