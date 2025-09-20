@@ -18,7 +18,7 @@ services:
       context: .
       target: css-builder
     restart: always
-    command: "pnpm run dev:container"
+    command: "pnpm run dev:css"
     volumes:
       - ./app/:/css-builder/app/:z
       - ./scripts/:/css-builder/scripts/:z
