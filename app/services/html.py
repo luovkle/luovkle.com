@@ -9,7 +9,7 @@ import yaml
 from bs4 import BeautifulSoup
 
 from app.schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
- 
+
 content_paths = {
     "author": "content/author/index.md",
     "posts": "content/posts",
@@ -126,9 +126,7 @@ def get_data_from_markdown_file(file_path):
     if not metadata_dict:
         raise KeyError("No properties found in metadata")
     html_body = markdown.markdown(
-        body,
-        extensions=["fenced_code", "codehilite"],
-        output_format="html"
+        body, extensions=["fenced_code", "codehilite"], output_format="html"
     )
     updated_html = update_base_html(html_body)
     return {
