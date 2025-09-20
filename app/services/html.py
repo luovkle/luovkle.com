@@ -19,12 +19,6 @@ content_paths = {
 }
 
 
-def render_source(source, replacements):
-    for pattern, replacement in replacements.items():
-        source = re.sub(pattern, replacement, source)
-    return source
-
-
 def get_cover_number(n: int, max: int) -> int:
     if n > max:
         return get_cover_number(n - max, max)
