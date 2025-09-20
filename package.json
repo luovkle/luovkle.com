@@ -5,6 +5,7 @@
     "build:css": "tailwindcss -c ./app/assets/tailwind.config.js -i ./app/assets/input.css -o ./app/static/css/styles.css --minify"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.13"
+    "@tailwindcss/cli": "^4.1.13",
+    "tailwindcss": "^4.1.13"
   }
 }
