@@ -2,7 +2,7 @@ from flask import Flask
 from whitenoise import WhiteNoise
 
 from .extensions import cache, compress
-from .loader import get_content
+from .services.html import get_content
 from .views import bp as views_bp
 from .views import internal_server_error, page_not_found
 

@@ -8,8 +8,8 @@ import markdown
 import yaml
 from bs4 import BeautifulSoup
 
-from .schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
-
+from app.schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
+ 
 content_paths = {
     "author": "content/author/index.md",
     "posts": "content/posts",
