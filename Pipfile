@@ -28,12 +28,3 @@ flake8 = "*"
 
 [requires]
 python_version = "3.13"
-
-[scripts]
-dev = "sh ./scripts/dev_server.sh"
-"dev:container" = "sh ./scripts/dev_server_container.sh"
-prod = "uwsgi --ini ./uwsgi.ini"
-format = "sh ./scripts/format.sh"
-lint = "sh ./scripts/lint.sh"
-"dev:css" = "pnpm run dev:css"
-"build:css" = "pnpm run build:css"

@@ -4,10 +4,14 @@ services:
     build:
       context: .
       target: runner
+    environment:
+      FLASK_DEBUG: true
+      FLASK_RUN_PORT: 4000
+      FLASK_RUN_HOST: 0.0.0.0
     ports:
       - 80:4000
     restart: always
-    command: "pipenv run dev:container"
+    command: "/runner/.venv/bin/flask run"
     volumes:
       - ./app/:/runner/app/:z
       - ./content/:/runner/content/:z
