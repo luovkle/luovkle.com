@@ -15,6 +15,7 @@ flask-compress = "*"
 flask-caching = "*"
 pydantic = "*"
 pygments = "*"
+rich = "*"
 
 [build-packages]
 pillow = "*"
