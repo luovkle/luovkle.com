@@ -1,6 +1,3 @@
-import os
-import re
-from datetime import datetime
 from functools import cache
 from pathlib import Path
 
@@ -22,12 +19,14 @@ from app.config import (
     THUMBNAILS_DIR,
 )
 from app.schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
-
-
-def get_cover_number(n: int, max: int) -> int:
-    if n > max:
-        return get_cover_number(n - max, max)
-    return n
+from app.services.common import (
+    estimate_reading_time,
+    find_markdown_files,
+    get_cover_number,
+    get_creation_date,
+    get_slug,
+    split_markdown_file,
+)
 
 
 def get_alternative_file_formats(original_file_path: Path) -> dict[str, Path]:
@@ -67,29 +66,6 @@ def get_headers_and_thumbnails(title: str) -> dict[str, dict[str, str | None]]:
     }
 
 
-def get_slug(file_path):
-    file = file_path.parts[-1]
-    return file.removesuffix(".md").replace("_", "-")
-
-
-def get_reading_time(content):
-    # number of words in an post / 200 words per minute
-    reading_time = round(len(content.split()) / 200)
-    return f"{reading_time} min"
-
-
-def get_creation_date(file_path):
-    c_time = os.path.getctime(file_path)
-    return datetime.fromtimestamp(c_time).strftime("%d.%m.%Y")
-
-
-def find_markdown_files(path):
-    files_path = Path(path)
-    if not files_path.is_dir():
-        return []
-    return list(files_path.glob("*.md"))
-
-
 def copy_pictures_to_static_dir(picture_content_path: Path) -> Path:
     picture_parent, picture = picture_content_path.parts[-2:]
     static_path = IMAGES_RELATIVE_DIR / picture_parent
@@ -116,15 +92,9 @@ def update_base_html(html):
     return {"content": str(soup), "extras": extras}
 
 
-def get_data_from_markdown_file(file_path):
-    content = file_path.read_text(encoding="utf-8")
-    metadata_pattern = r"^---\s*\n(.*?)\n---\s*\n(.*)$"
-    match = re.match(metadata_pattern, content, re.DOTALL)
-    if match:
-        metadata = match.group(1)
-        body = match.group(2)
-    else:
-        raise ValueError("Could not find the metadata in the markdown file")
+def get_data_from_markdown_file(md_file: Path):
+    md_content = md_file.read_text(encoding="utf-8")
+    metadata, body = split_markdown_file(md_content)
     metadata_dict = yaml.safe_load(metadata)
     if not metadata_dict:
         raise KeyError("No properties found in metadata")
@@ -173,7 +143,7 @@ def get_posts_content():
             "slug": post_md.slug or get_slug(path),
             "cover_image": headers_and_thumbnails["headers"]["default"],
             "thumbnail": headers_and_thumbnails["thumbnails"]["default"],
-            "reading_time": get_reading_time(post_md.content),
+            "reading_time": f"{estimate_reading_time(post_md.content)} min",
             "date": post_md.date or get_creation_date(path),
         }
 
@@ -195,7 +165,7 @@ def get_projects_content():
             "slug": project_md.slug or get_slug(path),
             "cover_image": headers_and_thumbnails["headers"]["default"],
             "thumbnail": headers_and_thumbnails["thumbnails"]["default"],
-            "reading_time": get_reading_time(project_md.content),
+            "reading_time": f"{estimate_reading_time(project_md.content)} min",
             "date": project_md.date or get_creation_date(path),
         }
 

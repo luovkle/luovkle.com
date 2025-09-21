@@ -1,9 +1,49 @@
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, render_template, request
 
 from app.extensions import cache
+from app.services.ansi import get_ansi_content
 from app.services.html import get_content
+from app.views.utils import is_cli_user_agent, render_ansi_template
 
 bp = Blueprint("views", __name__)
+
+
+@cache.memoize()
+def post_html_detail(slug: str):
+    content = get_content()
+    post = content["posts"].get(slug)
+    if not post:
+        abort(404)
+    return render_template("post_detail.html", metadata=content["metadata"], post=post)
+
+
+@cache.memoize()
+def post_ansi_detail(slug: str):
+    content = get_ansi_content()
+    post = content["posts"].get(slug)
+    if not post:
+        abort(404)
+    return render_ansi_template("post_template", **post)
+
+
+@cache.memoize()
+def project_html_detail(slug: str):
+    content = get_content()
+    project = content["projects"].get(slug)
+    if not project:
+        abort(404)
+    return render_template(
+        "project_detail.html", metadata=content["metadata"], project=project
+    )
+
+
+@cache.memoize()
+def project_ansi_detail(slug: str):
+    content = get_ansi_content()
+    project = content["projects"].get(slug)
+    if not project:
+        abort(404)
+    return render_ansi_template("project_template", **project)
 
 
 @bp.route("/")
@@ -29,13 +69,10 @@ def post_list():
 
 
 @bp.route("/p/<slug>")
-@cache.cached()
 def post_detail(slug):
-    content = get_content()
-    post = content["posts"].get(slug)
-    if not post:
-        abort(404)
-    return render_template("post_detail.html", metadata=content["metadata"], post=post)
+    if is_cli_user_agent(str(request.headers.get("User-Agent"))):
+        return post_ansi_detail(slug)
+    return post_html_detail(slug)
 
 
 @bp.route("/pr")
@@ -49,15 +86,10 @@ def project_list():
 
 
 @bp.route("/pr/<slug>")
-@cache.cached()
 def project_detail(slug):
-    content = get_content()
-    project = content["projects"].get(slug)
-    if not project:
-        abort(404)
-    return render_template(
-        "project_detail.html", metadata=content["metadata"], project=project
-    )
+    if is_cli_user_agent(str(request.headers.get("User-Agent"))):
+        return project_ansi_detail(slug)
+    return project_html_detail(slug)
 
 
 @bp.route("/author")

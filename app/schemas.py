@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, HttpUrl, field_serializer
 
 
 class Extras(BaseModel):
-    code: bool
+    code: bool = False
 
 
 class Content(BaseModel):
