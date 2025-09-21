@@ -8,15 +8,20 @@ import markdown
 import yaml
 from bs4 import BeautifulSoup
 
+from app.config import (
+    AUTHOR_CONTENT_DIR,
+    AUTHOR_CONTENT_FILE,
+    COVER_FILENAME_TEMPLATE,
+    HEADERS_DIR,
+    HOMEPAGE_CONTENT_FILE,
+    IMAGES_RELATIVE_DIR,
+    META_CONTENT_FILE,
+    POSTS_CONTENT_DIR,
+    PROJECTS_CONTENT_DIR,
+    STATIC_RELATIVE_DIR,
+    THUMBNAILS_DIR,
+)
 from app.schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
-
-content_paths = {
-    "author": "content/author/index.md",
-    "posts": "content/posts",
-    "projects": "content/projects",
-    "homepage": "content/homepage.md",
-    "meta": "content/meta.md",
-}
 
 
 def get_cover_number(n: int, max: int) -> int:
@@ -40,7 +45,7 @@ def collect_relative_image_urls(
     cover_paths = {"default": default_path, **alternative_paths}
     cover_urls = {}
     for name, path in cover_paths.items():
-        cover_urls[name] = str(path.relative_to("app/static"))
+        cover_urls[name] = str(path.relative_to(STATIC_RELATIVE_DIR))
     return cover_urls
 
 
@@ -48,7 +53,7 @@ def get_cover_urls(covers_path: Path, title: str) -> dict[str, str | None]:
     #
     number_of_covers = len(list(covers_path.glob("*.png")))
     cover_number = get_cover_number(len(title), number_of_covers)
-    cover_file = "cover_" + "{:03d}".format(cover_number) + ".png"
+    cover_file = COVER_FILENAME_TEMPLATE.format(cover_number)
     #
     default_cover_path = covers_path / cover_file
     alt_cover_paths = get_alternative_file_formats(default_cover_path)
@@ -56,11 +61,9 @@ def get_cover_urls(covers_path: Path, title: str) -> dict[str, str | None]:
 
 
 def get_headers_and_thumbnails(title: str) -> dict[str, dict[str, str | None]]:
-    headers_path = Path("app/static/images/headers/")
-    thumbnails_path = Path("app/static/images/thumbnails/")
     return {
-        "headers": get_cover_urls(headers_path, title),
-        "thumbnails": get_cover_urls(thumbnails_path, title),
+        "headers": get_cover_urls(HEADERS_DIR, title),
+        "thumbnails": get_cover_urls(THUMBNAILS_DIR, title),
     }
 
 
@@ -89,7 +92,7 @@ def find_markdown_files(path):
 
 def copy_pictures_to_static_dir(picture_content_path: Path) -> Path:
     picture_parent, picture = picture_content_path.parts[-2:]
-    static_path = Path("app/static/images") / picture_parent
+    static_path = IMAGES_RELATIVE_DIR / picture_parent
     if not static_path.is_dir():
         static_path.mkdir()
     picture_static_path = static_path / picture
@@ -137,8 +140,7 @@ def get_data_from_markdown_file(file_path):
 
 
 def get_metadata_content():
-    meta_path = Path(content_paths["meta"])
-    content_md = get_data_from_markdown_file(meta_path)
+    content_md = get_data_from_markdown_file(META_CONTENT_FILE)
     metadata_md = MetadataMD(**content_md)
     headers_and_thumbnails = get_headers_and_thumbnails(metadata_md.author)
     default_thumbnail = headers_and_thumbnails["thumbnails"]["default"]
@@ -150,10 +152,9 @@ def get_metadata_content():
 
 
 def get_author_content():
-    path = Path(content_paths["author"])
-    content_md = get_data_from_markdown_file(path)
+    content_md = get_data_from_markdown_file(AUTHOR_CONTENT_FILE)
     author_md = AuthorMD(**content_md)
-    picture_content_path = Path(f"content/author/{author_md.picture}")
+    picture_content_path = AUTHOR_CONTENT_DIR / author_md.picture
     picture_path = copy_pictures_to_static_dir(picture_content_path)
     alt_picture_paths = get_alternative_file_formats(picture_path)
     return {
@@ -177,7 +178,7 @@ def get_posts_content():
         }
 
     posts = {}
-    post_paths = find_markdown_files(content_paths["posts"])
+    post_paths = find_markdown_files(POSTS_CONTENT_DIR)
     for path in post_paths:
         data = get_single_post_data(path)
         posts[data["slug"]] = data
@@ -199,7 +200,7 @@ def get_projects_content():
         }
 
     projects = {}
-    project_paths = find_markdown_files(content_paths["projects"])
+    project_paths = find_markdown_files(PROJECTS_CONTENT_DIR)
     for path in project_paths:
         data = get_single_project_data(path)
         projects[data["slug"]] = data
@@ -207,7 +208,7 @@ def get_projects_content():
 
 
 def get_homepage_data(posts_data, projects_data):
-    path = Path(content_paths["homepage"])
+    path = Path(HOMEPAGE_CONTENT_FILE)
     content_md = get_data_from_markdown_file(path)
     homepage_md = HomepageMD(**content_md)
     posts_headers_and_thumbnails = get_headers_and_thumbnails("posts")
