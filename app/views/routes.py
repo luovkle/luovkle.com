@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, render_template
 
-from .extensions import cache
-from .services.html import get_content
+from app.extensions import cache
+from app.services.html import get_content
 
 bp = Blueprint("views", __name__)
 
