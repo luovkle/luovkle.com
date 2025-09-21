@@ -35,4 +35,4 @@ RUN /runner/.venv/bin/python -m whitenoise.compress /runner/app/static/
 COPY --from=convert-images /www/app/static/images/ /runner/app/static/images/
 COPY ["./content/", "/runner/content/"]
 EXPOSE 80
-CMD ["uwsgi", "--ini", "uwsgi.ini"]
+CMD ["/runner/.venv/bin/uwsgi", "--ini", "uwsgi.ini"]
