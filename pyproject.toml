@@ -1,0 +1,30 @@
+[project]
+name = "luovkle-com"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.0",
+    "brotli>=1.1.0",
+    "flask>=3.1.2",
+    "flask-caching>=2.3.1",
+    "flask-compress>=1.18",
+    "markdown>=3.9",
+    "pydantic>=2.11.9",
+    "pygments>=2.19.2",
+    "pyyaml>=6.0.3",
+    "rich>=14.1.0",
+    "uwsgi>=2.0.30",
+    "whitenoise>=6.11.0",
+]
+
+[dependency-groups]
+build = [
+    "pillow>=11.3.0",
+]
+dev = [
+    "autoflake>=2.3.1",
+    "black>=25.9.0",
+    "djlint>=1.36.4",
+    "flake8>=7.3.0",
+    "isort>=6.0.1",
+]

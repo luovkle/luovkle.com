@@ -4,18 +4,15 @@ services:
     build:
       context: .
       target: runner
-    environment:
-      FLASK_DEBUG: true
-      FLASK_RUN_PORT: 4000
-      FLASK_RUN_HOST: 0.0.0.0
+    user: root
     ports:
       - 80:4000
     restart: always
-    command: "/runner/.venv/bin/flask run"
+    command: "flask run --debug --port 4000 --host 0.0.0.0"
     volumes:
-      - ./app/:/runner/app/:z
-      - ./content/:/runner/content/:z
-      - ./scripts/:/runner/scripts/:z
+      - ./app/:/www/app/:z
+      - ./content/:/www/content/:z
+      - ./scripts/:/www/scripts/:z
   styles:
     container_name: styles
     build:
@@ -24,5 +21,5 @@ services:
     restart: always
     command: "pnpm run dev:css"
     volumes:
-      - ./app/:/css-builder/app/:z
-      - ./scripts/:/css-builder/scripts/:z
+      - ./app/:/www/app/:z
+      - ./scripts/:/www/scripts/:z
