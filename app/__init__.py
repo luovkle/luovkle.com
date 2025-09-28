@@ -1,12 +1,12 @@
 from flask import Flask
 from whitenoise import WhiteNoise
 
-from .config import STATIC_DIR, STATIC_PREFIX
-from .extensions import cache, compress
-from .services.ansi import get_ansi_content
-from .services.html import get_content
-from .views.routes import bp as views_bp
-from .views.routes import internal_server_error, page_not_found
+from app.config import STATIC_DIR, STATIC_PREFIX
+from app.extensions import cache, compress
+from app.services.ansi import get_ansi_content
+from app.services.html import get_content
+from app.views.routes import bp as views_bp
+from app.views.routes import internal_server_error, page_not_found
 
 
 class Config:
