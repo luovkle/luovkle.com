@@ -20,7 +20,7 @@ def create_app():
     app.register_blueprint(views_bp)
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
-    app.wsgi_app = WhiteNoise(
+    app.wsgi_app = WhiteNoise(  # ty: ignore[invalid-assignment]
         app.wsgi_app,
         root=STATIC_DIR,
         prefix=STATIC_PREFIX,
