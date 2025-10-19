@@ -3,8 +3,8 @@
 set -e
 set -x
 
-.venv/bin/ruff check app
-.venv/bin/ruff format app --check
-.venv/bin/djlint --profile=jinja --check --indent 2 --preserve-blank-lines \
+uvx ruff check app
+uvx ruff format app --check
+uvx djlint --profile=jinja --check --indent 2 --preserve-blank-lines \
   --close-void-tags --max-line-length 88 app/templates/
-.venv/bin/djlint --lint app/templates/
+uvx djlint --lint app/templates/
