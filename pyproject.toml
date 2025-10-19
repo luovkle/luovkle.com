@@ -39,3 +39,10 @@ select = [
     "ARG001", # unused arguments in functions
     "T201",   # print statements are not allowed
 ]
+
+[tool.djlint]
+profile="jinja"
+indent=2
+preserve_blank_lines=true
+close_void_tags=true
+max_line_length=88
