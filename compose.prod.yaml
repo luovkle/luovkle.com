@@ -1,7 +1,9 @@
 services:
   luovkle.com:
     container_name: luovkle.com
-    build: .
+    build:
+      context: .
+      dockerfile: Containerfile
     ports:
       - 80:80
     restart: always

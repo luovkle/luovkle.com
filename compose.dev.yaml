@@ -3,6 +3,7 @@ services:
     container_name: luovkle.com
     build:
       context: .
+      dockerfile: Containerfile
       target: runner
     user: root
     ports:
@@ -17,6 +18,7 @@ services:
     container_name: styles
     build:
       context: .
+      dockerfile: Containerfile
       target: css-builder
     restart: always
     command: "pnpm run dev:css"
