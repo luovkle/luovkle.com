@@ -22,9 +22,5 @@ build = [
     "pillow>=11.3.0",
 ]
 dev = [
-    "autoflake>=2.3.1",
-    "black>=25.9.0",
     "djlint>=1.36.4",
-    "flake8>=7.3.0",
-    "isort>=6.0.1",
 ]
