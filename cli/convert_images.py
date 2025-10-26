@@ -1,7 +1,7 @@
 import asyncio
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Callable
 
 from PIL import Image
 
@@ -136,11 +136,11 @@ async def main() -> None:
     # Collect all input image paths from the target directory
     input_paths = get_input_paths()
     # Prepare and run tasks to convert images into WebP format
-    webp_io_paths = zip(input_paths, get_webp_output_paths(input_paths))
+    webp_io_paths = zip(input_paths, get_webp_output_paths(input_paths), strict=False)
     tasks = [(img_to_webp, io_paths) for io_paths in webp_io_paths]
     await run_blocking_tasks_in_threads(tasks)
     # Prepare and run tasks to convert images into AVIF format
-    avif_io_paths = zip(input_paths, get_avif_output_paths(input_paths))
+    avif_io_paths = zip(input_paths, get_avif_output_paths(input_paths), strict=False)
     tasks = [(img_to_avif, io_paths) for io_paths in avif_io_paths]
     await run_blocking_tasks_in_threads(tasks)
 
