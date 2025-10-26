@@ -16,13 +16,14 @@ PROJECTS_CONTENT_DIR = _CONTENT_DIR / "projects"
 STATIC_DIR = _BASE_DIR / "app" / "static"
 STATIC_PREFIX = "static/"
 
-# Directories for cover images
-HEADERS_DIR = STATIC_DIR / "images" / "headers"
-THUMBNAILS_DIR = STATIC_DIR / "images" / "thumbnails"
+# Directories for images
+IMAGES_DIR = STATIC_DIR / "images"
+HEADERS_DIR = IMAGES_DIR / "headers"
+THUMBNAILS_DIR = IMAGES_DIR / "thumbnails"
 
 # Relative references used in templates
 STATIC_RELATIVE_DIR = STATIC_DIR
-IMAGES_RELATIVE_DIR = STATIC_DIR / "images"
+IMAGES_RELATIVE_DIR = IMAGES_DIR
 
 # Template for cover images, zero-padded to 3 digits (e.g., cover_001.png)
 COVER_FILENAME_TEMPLATE = "cover_{:03d}.png"

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import BaseModel, Field, HttpUrl, field_serializer
 
 
@@ -5,12 +7,12 @@ class Extras(BaseModel):
     code: bool = False
 
 
-class Content(BaseModel):
+class ContentMD(BaseModel):
     extras: Extras
     content: str | None = None
 
 
-class MetadataMD(Content):
+class MetadataMD(ContentMD):
     # SEO
     description: str
     keywords: list[str] = Field(min_length=1)
@@ -44,12 +46,12 @@ class MetadataMD(Content):
         return ", ".join(robots)
 
 
-class HomepageMD(Content):
+class HomepageMD(ContentMD):
     posts_section_description: str
     projects_section_description: str
 
 
-class AuthorMD(Content):
+class AuthorMD(ContentMD):
     picture: str
     full_name: str
     role: str
@@ -58,7 +60,7 @@ class AuthorMD(Content):
     linkedin_url: HttpUrl | None = None
 
 
-class PostMD(Content):
+class PostMD(ContentMD):
     title: str
     description: str | None = None
     slug: str | None = None
@@ -66,10 +68,41 @@ class PostMD(Content):
     topic: str | None = None
 
 
-class ProjectMD(Content):
+class ProjectMD(ContentMD):
     title: str
     description: str | None = None
     repository: str | None = None
     website: HttpUrl | None = None
     slug: str | None = None
     date: str | None = None
+
+
+class ContentContext(BaseModel):
+    """Context information required to process a specific content item.
+
+    Attributes:
+        index_file: Path to the Markdown file to render (for directories this
+            is typically `<dir>/index.md`; for files, it is the file itself).
+        img_files: Optional list of image files discovered under `<dir>/images`.
+            May be None when the item is a standalone Markdown file.
+        is_dir: Whether the content item is a directory-based content unit.
+        content_type: Logical type or category for the content (e.g., "posts",
+            "pages"); used to build the final static path.
+    """
+
+    index_file: Path
+    img_files: list[Path] | None = None
+    is_dir: bool = False
+    content_type: str
+
+
+class Content(BaseModel):
+    """Rendered content payload.
+
+    Attributes:
+        title: Optional title extracted from the file or directory name.
+        content: HTML rendered from Markdown, with image paths rewritten if needed.
+    """
+
+    title: str | None = None
+    content: str
