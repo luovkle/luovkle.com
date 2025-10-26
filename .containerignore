@@ -1,0 +1,19 @@
+# Dependency directories
+.venv/
+node_modules/
+
+# Ruff stuff
+.ruff_cache/
+
+# Byte-compiled
+__pycache__/
+
+# Static
+app/static/css/styles.css
+app/static/images/author/
+app/static/css/highlight.css
+app/static/js/highlight.js
+app/static/**/*.gz
+app/static/**/*.br
+app/static/**/*.webp
+app/static/**/*.avif
