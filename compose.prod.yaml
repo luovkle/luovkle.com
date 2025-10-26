@@ -3,7 +3,6 @@ services:
     container_name: luovkle.com
     build:
       context: .
-      dockerfile: Containerfile
     ports:
       - 80:80
     restart: always
