@@ -3,8 +3,8 @@
 set -e
 set -x
 
-uvx ty check app
-uvx ruff check app
-uvx ruff format app --check
+uvx ty check app cli
+uvx ruff check app cli
+uvx ruff format --check app cli
 uvx djlint --check app/templates/
 uvx djlint --lint app/templates/

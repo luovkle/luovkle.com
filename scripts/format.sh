@@ -3,6 +3,6 @@
 set -e
 set -x
 
-uvx ruff check app --fix
-uvx ruff format app
+uvx ruff check --fix app cli
+uvx ruff format app cli
 uvx djlint --reformat --quiet app/templates/
