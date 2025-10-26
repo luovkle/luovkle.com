@@ -37,3 +37,12 @@ format:
 
 lint:
 	sh ./scripts/lint.sh
+
+hooks:
+	pre-commit run --all
+
+hooks-install:
+	pre-commit install
+
+hooks-clean:
+	pre-commit clean
