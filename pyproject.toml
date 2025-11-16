@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
     "beautifulsoup4>=4.14.0",
+    "fastapi[standard-no-fastapi-cloud-cli]>=0.121.2",
     "markdown>=3.9",
     "pydantic>=2.11.9",
     "pygments>=2.19.2",
