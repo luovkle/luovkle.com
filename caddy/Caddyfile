@@ -1,0 +1,10 @@
+luovkle.com {
+	encode
+
+	handle_path /static/* {
+		root * /srv/static/
+		file_server browse
+	}
+
+	reverse_proxy luovkle.com:4000
+}
