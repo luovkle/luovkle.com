@@ -82,7 +82,7 @@ FROM python:3.13-slim-trixie AS runner
 RUN groupadd --system --gid 999 nonroot \
  && useradd --system --gid 999 --uid 999 --create-home nonroot
 # Install the system dependencies
-RUN apt-get update && apt-get install media-types libcap2-bin -y
+RUN apt-get update && apt-get install media-types -y
 # Use `/www/` as the working directory
 WORKDIR /www/
 # Copy the virtual environment from the runner-builder
@@ -90,7 +90,6 @@ COPY --from=runner-builder --chown=nonroot:nonroot /www/.venv/ /www/.venv/
 # Place executables in the environment at the front of the path
 ENV PATH="/www/.venv/bin:$PATH"
 # Copy the application code
-COPY ./uwsgi.ini /www/
 COPY ./app/ /www/app/
 # Generate the highlight.css file
 RUN pygmentize \
@@ -100,17 +99,13 @@ RUN pygmentize \
     > /www/app/static/css/highlight.css
 # Copy the css styles from the css-builder
 COPY --from=css-builder /www/app/static/css/ /www/app/static/css/
-# Compress the static content
-RUN python -m whitenoise.compress /www/app/static/
 # Copy the images and markdown content
 COPY --from=convert-images /www/app/static/images/ /www/app/static/images/
 COPY ./content/ /www/content/
 # Configure the nonroot user as the owner of the images directory
 RUN chown -R nonroot:nonroot /www/app/static/images/
-# Configure uWSGI to run on privileged ports
-RUN setcap CAP_NET_BIND_SERVICE=+eip /www/.venv/bin/uwsgi
 # Use the non-root user to run our application
 USER nonroot
-# Run the Flask application by default
-EXPOSE 80
-CMD ["uwsgi", "--ini", "uwsgi.ini"]
+# Run the FastAPI application by default
+EXPOSE 4000
+CMD ["fastapi", "run", "--port", "4000", "--host", "0.0.0.0", "app/main.py"]

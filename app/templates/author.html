@@ -16,7 +16,7 @@
       <div class="px-5 sm:px-10 w-full md:w-[768px] mx-auto space-y-5">
         <ul class="flex gap-2">
           <li>
-            <a href="{{ url_for('views.home') }}"
+            <a href="{{ url_for('home') }}"
                class="text-neutral-400 hover:text-neutral-300">Home</a>
           </li>
           <li class="text-neutral-400">/</li>
@@ -36,14 +36,14 @@
         <div class="flex justify-center sm:w-60 sm:h-60">
           <picture>
             {% if author.picture.avif %}
-              <source srcset="{{ url_for('static', filename=author.picture.avif) }}"
+              <source srcset="{{ url_for('static', path=author.picture.avif) }}"
                       type="image/avif" />
             {% endif %}
             {% if author.picture.webp %}
-              <source srcset="{{ url_for('static', filename=author.picture.webp) }}"
+              <source srcset="{{ url_for('static', path=author.picture.webp) }}"
                       type="image/webp" />
             {% endif %}
-            <img src="{{ url_for('static', filename=author.picture.default) }}"
+            <img src="{{ url_for('static', path=author.picture.default) }}"
                  alt="picture"
                  class="rounded-full h-60" />
           </picture>

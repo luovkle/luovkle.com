@@ -8,7 +8,7 @@ services:
     ports:
       - 80:4000
     restart: always
-    command: "flask run --debug --port 4000 --host 0.0.0.0"
+    command: "fastapi dev --port 4000 --host 0.0.0.0 app/main.py"
     volumes:
       - ./app/:/www/app/:z
       - ./content/:/www/content/:z

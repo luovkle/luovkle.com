@@ -201,7 +201,7 @@ def load_content(content_context: ContentContext) -> Content:
       2. Render Markdown to HTML.
       3. If images are present in the context, copy them to the static dir.
       4. Parse the HTML and rewrite `<img src="...">` for local images to use
-         `url_for('static', filename=...)`.
+         `url_for('static', path=...)`.
 
     Args:
         content_context: The ContentContext describing the item to render.
@@ -248,6 +248,6 @@ def load_content(content_context: ContentContext) -> Content:
         except ValueError:
             # Fallback to a POSIX-style path if relative computation fails.
             rel = dest.as_posix()
-        # Inject a Jinja expression that Flask will resolve at render time.
-        img["src"] = "{{ url_for('static', filename='" + rel + "') }}"
+        # Inject a Jinja expression that FastAPI will resolve at render time.
+        img["src"] = "{{ url_for('static', path='" + rel + "') }}"
     return Content(title=content_title, content=str(soup))

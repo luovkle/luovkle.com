@@ -14,7 +14,7 @@
 {% block content %}
   <div class="px-5 sm:px-10 md:w-[768px] mx-auto divide-y">
     <div class="py-24">
-      <a href="{{ url_for('views.author') }}"
+      <a href="{{ url_for('author') }}"
          class="space-y-3 hover:text-neutral-400">
         <h1 class="font-black text-5xl leading-tight">{{ author.full_name }}</h1>
         <h2 class="font-bold text-2xl">{{ author.role }}</h2>
@@ -24,7 +24,7 @@
       <h2 class="font-extrabold text-3xl mt-4">Sections</h2>
       <ul class="mt-12 mb-3 space-y-3 flex flex-col items-center">
         <li class="md:max-w-[768px] sm:max-h-[282px]">
-          <a href="{{ url_for('views.post_list') }}"
+          <a href="{{ url_for('post_list') }}"
              class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
             {{ thumbnail(urls=homepage.posts_section.thumbnail) }}
             <div class="h-[148px] sm:h-auto sm:w-2/5 m-8">
@@ -43,7 +43,7 @@
           </a>
         </li>
         <li class="md:max-w-[768px] sm:max-h-[282px]">
-          <a href="{{ url_for('views.project_list') }}"
+          <a href="{{ url_for('project_list') }}"
              class="flex flex-col sm:flex-row bg-neutral-900 rounded-3xl overflow-hidden">
             {{ thumbnail(urls=homepage.projects_section.thumbnail) }}
             <div class="h-[148px] sm:h-auto sm:w-2/5 m-8">

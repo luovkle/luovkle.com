@@ -11,10 +11,10 @@ dev-stop:
 	podman-compose -f ./compose.dev.yaml down
 
 local-prod:
-	./.venv/bin/uwsgi --ini ./uwsgi.ini
+	./.venv/bin/fastapi run --port 4000 app/main.py 
 
 local-dev:
-	./.venv/bin/flask run --debug --port 4000
+	./.venv/bin/fastapi dev --port 4000 app/main.py
 
 local-dev-styles:
 	pnpm run dev:css

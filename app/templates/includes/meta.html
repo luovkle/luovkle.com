@@ -5,7 +5,7 @@
   <meta property="og:description"
         content="{{ kwargs['og_description']|default(metadata.og_description, true) }}" />
   <meta property="og:image"
-        content="{{ url_for('static', filename=kwargs['og_image']|default(metadata.og_image) , _external=True) }}" />
+        content="{{ url_for('static', path=kwargs['og_image']|default(metadata.og_image)) }}" />
   <meta property="og:url"
         content="{{ kwargs['og_url']|default(metadata.og_url) }}" />
   <meta property="og:type" content="{{ metadata.og_type }}" />
@@ -17,6 +17,6 @@
   <meta name="twitter:description"
         content="{{ kwargs['twitter_description']|default(metadata.twitter_description, true) }}" />
   <meta name="twitter:image"
-        content="{{ url_for('static', filename=kwargs['twitter_image']|default(metadata.twitter_image) , _external=True) }}" />
+        content="{{ url_for('static', path=kwargs['twitter_image']|default(metadata.twitter_image)) }}" />
   <meta name="twitter:creator" content="{{ metadata.twitter_creator }}" />
 {% endmacro %}

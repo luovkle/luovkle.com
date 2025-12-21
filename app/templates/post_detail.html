@@ -6,7 +6,7 @@
   {{ meta(og_title=post.title,
     og_description=post.description,
     og_image=post.thumbnail,
-    og_url=url_for('views.post_detail', slug=post.slug, _external=True) ,
+    og_url=url_for('post_detail', slug=post.slug) ,
   twitter_title=post.title,
   twitter_description=post.description,
   twitter_image=post.thumbnail,
@@ -20,19 +20,19 @@
 
 {% block content %}
   <div class="max-w-[1024px] mx-auto">
-    <div style="background-image: url('{{ url_for('static', filename=post.cover_image) }}')"
+    <div style="background-image: url('{{ url_for('static', path=post.cover_image) }}')"
          class="lg:rounded-b-3xl">
       <div class="h-[700px] lg:h-[600px]">
         <div class="pt-[200px] flex flex-col justify-center">
           <div class="px-5 sm:px-10 w-full md:w-[768px] mx-auto space-y-5">
             <ul class="flex gap-2">
               <li>
-                <a href="{{ url_for('views.home') }}"
+                <a href="{{ url_for('home') }}"
                    class="text-neutral-400 hover:text-neutral-300">Home</a>
               </li>
               <li class="text-neutral-400">/</li>
               <li>
-                <a href="{{ url_for('views.post_list') }}"
+                <a href="{{ url_for('post_list') }}"
                    class="text-neutral-400 hover:text-neutral-300">Revelations</a>
               </li>
               <li class="text-neutral-400">/</li>
@@ -80,12 +80,12 @@
     <link rel="preload"
           as="style"
           onload="this.onload=null;this.rel='stylesheet'"
-          href="{{ url_for('static', filename='css/highlight.css') }}" />
+          href="{{ url_for('static', path='css/highlight.css') }}" />
   {% endif %}
   <script type="text/javascript">
     const copyLink = () => {
       navigator.clipboard.writeText(
-        "{{ url_for('views.post_detail', slug=post.slug, _external=True) }}"
+        "{{ url_for('post_detail', slug=post.slug) }}"
       );
 
       const shareBtn = document.getElementById("share-btn");
