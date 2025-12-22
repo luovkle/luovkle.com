@@ -27,7 +27,7 @@ services:
     container_name: caddy
     build:
       context: caddy
-      dockerfile: Containerfile.dev
+      dockerfile: Containerfile.local
     ports:
       - 80:80
     restart: always

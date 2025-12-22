@@ -1,0 +1,23 @@
+services:
+  luovkle.com:
+    container_name: luovkle.com
+    build:
+      context: .
+    expose:
+      - 4000
+    restart: always
+    volumes:
+      - static_files:/www/app/static/
+  caddy:
+    container_name: caddy
+    build:
+      context: caddy
+      dockerfile: Containerfile.local
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - static_files:/srv/static/
+volumes:
+  static_files:

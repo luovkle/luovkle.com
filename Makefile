@@ -4,6 +4,12 @@ prod:
 prod-stop:
 	podman-compose -f ./compose.prod.yaml down
 
+stage:
+	podman-compose -f ./compose.stage.yaml up -d --build
+
+stage-stop:
+	podman-compose -f ./compose.stage.yaml down
+
 dev:
 	podman-compose -f ./compose.dev.yaml up -d --build
 
