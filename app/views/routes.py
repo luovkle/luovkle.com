@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request, status
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from app.services.ansi import get_ansi_content
 from app.services.html import get_content

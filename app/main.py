@@ -1,14 +1,14 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request, status
 from fastapi.staticfiles import StaticFiles
 
 from app.services.ansi import get_ansi_content
 from app.services.html import get_content
-
 from app.views.routes import (
-    router,
     internal_exception,
     not_found_exception,
+    router,
 )
 
 
