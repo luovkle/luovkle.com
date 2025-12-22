@@ -12,6 +12,7 @@ services:
     container_name: caddy
     build:
       context: caddy
+      dockerfile: Containerfile.prod
     ports:
       - 80:80
       - 443:443
