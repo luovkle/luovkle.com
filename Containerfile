@@ -92,7 +92,7 @@ ENV PATH="/www/.venv/bin:$PATH"
 # Copy the application code
 COPY ./app/ /www/app/
 # Generate the highlight.css file
-RUN pygmentize \
+RUN mkdir -p /www/app/static/css/ && pygmentize \
     -S github-dark \
     -f html \
     -a .codehilite \
