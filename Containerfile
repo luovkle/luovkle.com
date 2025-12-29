@@ -43,12 +43,13 @@ WORKDIR /www/
 # Copy the virtual environment from the convert-images-builder
 COPY --from=convert-images-builder /www/.venv/ /www/.venv/
 # Copy the required files for the image format conversion
-COPY ./cli/convert_images.py /www/cli/
+COPY ./cli/ /www/cli/
 COPY ./app/static/images/ /www/app/static/images/
 # Place executables in the environment at the front of the path
 ENV PATH="/www/.venv/bin:$PATH"
 # Run the image format conversion script
-RUN python /www/cli/convert_images.py
+RUN python -m cli.convert_images
+RUN python -m cli.img_to_ansi
 
 
 # Use a Python image with uv pre-installed
@@ -101,6 +102,7 @@ RUN mkdir -p /www/app/static/css/ && pygmentize \
 COPY --from=css-builder /www/app/static/css/ /www/app/static/css/
 # Copy the images and markdown content
 COPY --from=convert-images /www/app/static/images/ /www/app/static/images/
+COPY --from=convert-images /www/app/ansi/ /www/app/static/
 COPY ./content/ /www/content/
 # Configure the nonroot user as the owner of the images directory
 RUN chown -R nonroot:nonroot /www/app/static/images/

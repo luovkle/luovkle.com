@@ -26,7 +26,10 @@ local-dev-styles:
 	pnpm run dev:css
 
 utils-optimize-img:
-	./.venv/bin/python ./cli/convert_images.py
+	./.venv/bin/python -m cli.convert_images
+
+utils-img-to-ansi:
+	./.venv/bin/python -m cli.img_to_ansi
 
 utils-highlight-css:
 	./.venv/bin/pygmentize \

@@ -20,3 +20,6 @@ app/static/**/*.avif
 
 # Content
 content/**/test_*
+
+# ANSI
+app/ansi/
