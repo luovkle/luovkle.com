@@ -6,5 +6,5 @@ luovkle.com {
 		file_server browse
 	}
 
-	reverse_proxy luovkle.com:4000
+	reverse_proxy www:4000
 }

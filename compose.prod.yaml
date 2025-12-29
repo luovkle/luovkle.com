@@ -1,6 +1,6 @@
 services:
-  luovkle.com:
-    container_name: luovkle.com
+  www:
+    container_name: www
     build:
       context: .
     expose:
