@@ -110,4 +110,10 @@ RUN chown -R nonroot:nonroot /www/app/static/images/
 USER nonroot
 # Run the FastAPI application by default
 EXPOSE 4000
-CMD ["fastapi", "run", "--port", "4000", "--host", "0.0.0.0", "--forwarded-allow-ips", "*", "app/main.py"]
+CMD [ \
+  "fastapi", "run", \
+  "--port", "4000", \
+  "--host", "0.0.0.0", \
+  "--forwarded-allow-ips", "*", \
+  "app/main.py" \
+  ]
