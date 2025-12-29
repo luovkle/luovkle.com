@@ -19,5 +19,9 @@ services:
     restart: always
     volumes:
       - static_files:/srv/static/
+      - caddy_data:/data/
+      - caddy_config:/config/
 volumes:
   static_files:
+  caddy_data:
+  caddy_config:
