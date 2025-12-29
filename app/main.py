@@ -1,28 +1,9 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request, status
 from fastapi.staticfiles import StaticFiles
 
-from app.services.ansi import get_ansi_content
-from app.services.html import get_content
-from app.views.routes import (
-    internal_exception,
-    not_found_exception,
-    router,
-)
+from app.views.routes import internal_exception, not_found_exception, router
 
-
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    get_content()
-    get_ansi_content()
-    yield
-
-
-app = FastAPI(
-    openapi_url=None,
-    lifespan=lifespan,
-)
+app = FastAPI(openapi_url=None)
 
 app.include_router(router)
 

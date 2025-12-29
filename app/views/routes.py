@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+from contextlib import asynccontextmanager
+from typing import TYPE_CHECKING
+
 from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -6,7 +11,21 @@ from app.services.ansi import get_ansi_content
 from app.services.html import get_content
 from app.views.utils import is_cli_user_agent, render_ansi_template
 
-router = APIRouter(include_in_schema=False)
+if TYPE_CHECKING:
+    from fastapi import FastAPI
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    get_content()
+    get_ansi_content()
+    yield
+
+
+router = APIRouter(
+    lifespan=lifespan,
+    include_in_schema=False,
+)
 
 templates = Jinja2Templates(directory="app/templates/")
 
