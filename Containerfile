@@ -102,7 +102,7 @@ RUN mkdir -p /www/app/static/css/ && pygmentize \
 COPY --from=css-builder /www/app/static/css/ /www/app/static/css/
 # Copy the images and markdown content
 COPY --from=convert-images /www/app/static/images/ /www/app/static/images/
-COPY --from=convert-images /www/app/ansi/ /www/app/static/
+COPY --from=convert-images /www/app/ansi/ /www/app/ansi/
 COPY ./content/ /www/content/
 # Configure the nonroot user as the owner of the images directory
 RUN chown -R nonroot:nonroot /www/app/static/images/
