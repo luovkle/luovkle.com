@@ -72,7 +72,8 @@ def copy_pictures_to_static_dir(picture_content_path: Path) -> Path:
     if not static_path.is_dir():
         static_path.mkdir()
     picture_static_path = static_path / picture
-    picture_static_path.write_bytes(picture_content_path.read_bytes())
+    if not picture_static_path.exists():
+        picture_static_path.write_bytes(picture_content_path.read_bytes())
     return picture_static_path
 
 
