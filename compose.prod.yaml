@@ -3,6 +3,7 @@ services:
     container_name: www
     build:
       context: .
+      dockerfile: Containerfile
     expose:
       - 4000
     restart: always
