@@ -3,7 +3,6 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 import markdown
-import yaml
 from bs4 import BeautifulSoup
 
 from app.config import (
@@ -17,6 +16,7 @@ from app.config import (
     META_CONTENT_FILE,
     POSTS_CONTENT_DIR,
     PROJECTS_CONTENT_DIR,
+    STATIC_PREFIX,
     STATIC_RELATIVE_DIR,
     THUMBNAILS_DIR,
 )
@@ -27,17 +27,19 @@ from app.schemas import (
     CoverUrls,
     HomepageMD,
     MetadataMD,
-    PostMD,
-    ProjectMD,
+    PublishedContent,
+    TemplateArgs,
 )
 from app.services.common import (
     estimate_reading_time,
-    find_markdown_files,
+    get_content_context,
+    get_content_objects,
     get_cover_number,
     get_creation_date,
     get_slug,
+    load_generic_markdown_content,
+    load_markdown_content,
     move_image,
-    split_markdown_file,
 )
 from app.types import HeadersAndThumbnailsDict
 
@@ -91,19 +93,71 @@ def copy_pictures_to_static_dir(picture_content_path: Path) -> Path:
     return picture_static_path
 
 
-def update_base_html(html):
-    soup = BeautifulSoup(html, "html.parser")
-    extras = {"code": False}
+def _is_external_url(src: str) -> bool:
+    """Determine whether the given string is an absolute (external) URL.
+
+    An external URL is considered one that includes a scheme (e.g., http/https),
+    and:
+      - has a network location (netloc), or
+      - uses a scheme like `data:` or `mailto:` which is absolute by definition.
+
+    Args:
+        src: URL or path string to evaluate.
+
+    Returns:
+        True if `src` is an absolute/external URL, otherwise False.
+
+    Raises:
+        ValueError: If `src` is not a string or is empty/whitespace.
+    """
+    if type(src) is not str:
+        raise ValueError(f"Expected a string, got {type(src).__name__!r}")
+    if not src.strip():
+        raise ValueError("URL source cannot be empty or only whitespace")
+    parts = urlsplit(src)
+    if parts.scheme:
+        if parts.netloc or parts.scheme in {"data", "mailto"}:
+            return True
+    return False
+
+
+def _parse_markdown(content_context: ContentContext, body: str) -> dict:
+    # Convert Markdown to HTML (no extra extensions enabled here by design).
+    html_content = markdown.markdown(
+        body,
+        extensions=["fenced_code", "codehilite"],
+        output_format="html",
+    )
+    template_args = {"code": False}
+    # Parse rendered HTML to find and rewrite image sources when they are local.
+    soup = BeautifulSoup(html_content, "html.parser")
+    imgs = soup.find_all("img")
+    # Use the directory containing the index file to compute a unique static path.
+    directory = content_context.index_file.parent
+    for img in imgs:
+        img_src_raw = img.get("src")
+        img_src_str = str(img_src_raw)  # Normalize to string for checks.
+        # Skip empty sources or external URLs (keep as-is).
+        if not img_src_raw or _is_external_url(img_src_str):
+            continue
+        # Only use the filename part to avoid leaking nested relative paths.
+        src_name = Path(img_src_str).name
+        # Destination: /static/images/<content_type>/<dir_name>/<src_name>
+        dest = IMAGES_DIR / content_context.content_type / directory.name / src_name
+        # Generate a path relative to the static root to feed url_for().
+        rel = STATIC_PREFIX + str(dest.relative_to(STATIC_RELATIVE_DIR).as_posix())
+        # Inject a Jinja expression that FastAPI will resolve at render time.
+        img["src"] = rel
     # Check for <code> tags
     code_blocks = soup.find_all("code")
     if len(code_blocks) >= 1:
-        extras["code"] = True
+        template_args["code"] = True
     # Update <a> tags
     tags = soup.find_all("a")
     for tag in tags:
-        tag.attrs["class"] = "text-sky-500 font-bold"  # type: ignore
-        tag.attrs["target"] = "_blank"  # type: ignore
-        tag.attrs["rel"] = "noopener noreferrer"  # type: ignore
+        tag.attrs["class"] = "text-sky-500 font-bold"
+        tag.attrs["target"] = "_blank"
+        tag.attrs["rel"] = "noopener noreferrer"
     # Update <h1> tags
     for tag in soup.find_all("h1"):
         tag.attrs["class"] = "text-4xl font-black"
@@ -139,35 +193,7 @@ def update_base_html(html):
     # Update <pre> tags
     for tag in soup.find_all("pre"):
         tag.attrs["class"] = "py-3 px-3 text-md overflow-x-auto"
-    return {"content": str(soup), "extras": extras}
-
-
-def _is_external_url(src: str) -> bool:
-    """Determine whether the given string is an absolute (external) URL.
-
-    An external URL is considered one that includes a scheme (e.g., http/https),
-    and:
-      - has a network location (netloc), or
-      - uses a scheme like `data:` or `mailto:` which is absolute by definition.
-
-    Args:
-        src: URL or path string to evaluate.
-
-    Returns:
-        True if `src` is an absolute/external URL, otherwise False.
-
-    Raises:
-        ValueError: If `src` is not a string or is empty/whitespace.
-    """
-    if type(src) is not str:
-        raise ValueError(f"Expected a string, got {type(src).__name__!r}")
-    if not src.strip():
-        raise ValueError("URL source cannot be empty or only whitespace")
-    parts = urlsplit(src)
-    if parts.scheme:
-        if parts.netloc or parts.scheme in {"data", "mailto"}:
-            return True
-    return False
+    return {"content": str(soup), "extras": template_args}
 
 
 def load_content(content_context: ContentContext) -> Content:
@@ -230,26 +256,50 @@ def load_content(content_context: ContentContext) -> Content:
     return Content(title=content_title, content=str(soup))
 
 
-def get_data_from_markdown_file(md_file: Path):
-    md_content = md_file.read_text(encoding="utf-8")
-    metadata, body = split_markdown_file(md_content)
-    metadata_dict = yaml.safe_load(metadata)
-    if not metadata_dict:
-        raise KeyError("No properties found in metadata")
-    html_body = markdown.markdown(
-        body, extensions=["fenced_code", "codehilite"], output_format="html"
+def _get_published_content(content_context: ContentContext) -> PublishedContent:
+    index_path: Path = content_context.index_file
+    if not index_path.is_file():
+        raise FileNotFoundError(f"index file not found: {index_path!s}")
+    # Derive a human-friendly title from the filename or the directory name.
+    title = index_path.parent.stem if content_context.is_dir else index_path.stem
+    # If the context provides images, copy them into the static images directory.
+    if content_context.img_files:
+        move_image(content_context)
+    # Load markdown content and metadata from the source file
+    markdown_content = load_markdown_content(content_context.index_file)
+    # Parse markdown only if a body exists; otherwise use safe defaults
+    if markdown_content.body:
+        parsed_markdown = _parse_markdown(content_context, markdown_content.body)
+        body, extras = parsed_markdown["content"], parsed_markdown["extras"]
+    else:
+        body, extras = None, TemplateArgs().model_dump()
+    # Resolve derived fields and fallbacks
+    slug = markdown_content.slug or get_slug(content_context.index_file)
+    headers_and_thumbnails = get_headers_and_thumbnails(markdown_content.title)
+    cover_image_path = headers_and_thumbnails["headers"].default
+    thumbnail_path = headers_and_thumbnails["thumbnails"].default
+    reading_time_minutes = estimate_reading_time(markdown_content.body)
+    publish_date = markdown_content.date or get_creation_date(
+        content_context.index_file
     )
-    updated_html = update_base_html(html_body)
-    return {
-        **metadata_dict,
-        "content": updated_html["content"],
-        "extras": updated_html["extras"],
+    # Assemble final payload for the published content model
+    published_content_dict = {
+        **markdown_content.model_dump(),
+        "title": title,
+        "slug": slug,
+        "publish_date": publish_date,
+        "body": body,
+        "extras": extras,
+        "cover_image_path": cover_image_path,
+        "thumbnail_path": thumbnail_path,
+        "reading_time_minutes": reading_time_minutes,
     }
+    return PublishedContent(**published_content_dict)
 
 
 def get_metadata_content():
-    content_md = get_data_from_markdown_file(META_CONTENT_FILE)
-    metadata_md = MetadataMD(**content_md)
+    generic_markdown_content = load_generic_markdown_content(META_CONTENT_FILE)
+    metadata_md = MetadataMD(**generic_markdown_content)
     headers_and_thumbnails = get_headers_and_thumbnails(metadata_md.author)
     default_thumbnail = headers_and_thumbnails["thumbnails"].default_url
     return {
@@ -260,8 +310,8 @@ def get_metadata_content():
 
 
 def get_author_content():
-    content_md = get_data_from_markdown_file(AUTHOR_CONTENT_FILE)
-    author_md = AuthorMD(**content_md)
+    generic_markdown_content = load_generic_markdown_content(AUTHOR_CONTENT_FILE)
+    author_md = AuthorMD(**generic_markdown_content)
     picture_content_path = AUTHOR_CONTENT_DIR / author_md.picture
     picture_path = copy_pictures_to_static_dir(picture_content_path)
     alt_picture_paths = get_alternative_file_formats(picture_path)
@@ -272,53 +322,26 @@ def get_author_content():
 
 
 def get_posts_content():
-    def get_single_post_data(path):
-        content_md = get_data_from_markdown_file(path)
-        post_md = PostMD(**content_md)
-        headers_and_thumbnails = get_headers_and_thumbnails(post_md.title)
-        return {
-            **post_md.model_dump(),
-            "slug": post_md.slug or get_slug(path),
-            "cover_image": headers_and_thumbnails["headers"].default_url,
-            "thumbnail": headers_and_thumbnails["thumbnails"].default_url,
-            "reading_time": f"{estimate_reading_time(post_md.content)} min",
-            "date": post_md.date or get_creation_date(path),
-        }
-
     posts = {}
-    post_paths = find_markdown_files(POSTS_CONTENT_DIR)
-    for path in post_paths:
-        data = get_single_post_data(path)
-        posts[data["slug"]] = data
+    for content_obj in get_content_objects(POSTS_CONTENT_DIR):
+        content_context = get_content_context(content_obj)
+        content = _get_published_content(content_context)
+        posts[content.slug] = content.model_dump()
     return posts
 
 
 def get_projects_content():
-    def get_single_project_data(path):
-        content_md = get_data_from_markdown_file(path)
-        project_md = ProjectMD(**content_md)
-        headers_and_thumbnails = get_headers_and_thumbnails(project_md.title)
-        return {
-            **project_md.model_dump(),
-            "slug": project_md.slug or get_slug(path),
-            "cover_image": headers_and_thumbnails["headers"].default_url,
-            "thumbnail": headers_and_thumbnails["thumbnails"].default_url,
-            "reading_time": f"{estimate_reading_time(project_md.content)} min",
-            "date": project_md.date or get_creation_date(path),
-        }
-
     projects = {}
-    project_paths = find_markdown_files(PROJECTS_CONTENT_DIR)
-    for path in project_paths:
-        data = get_single_project_data(path)
-        projects[data["slug"]] = data
+    for content_obj in get_content_objects(PROJECTS_CONTENT_DIR):
+        content_context = get_content_context(content_obj)
+        content = _get_published_content(content_context)
+        projects[content.slug] = content.model_dump()
     return projects
 
 
 def get_homepage_data(posts_data, projects_data):
-    path = Path(HOMEPAGE_CONTENT_FILE)
-    content_md = get_data_from_markdown_file(path)
-    homepage_md = HomepageMD(**content_md)
+    generic_markdown_content = load_generic_markdown_content(HOMEPAGE_CONTENT_FILE)
+    homepage_md = HomepageMD(**generic_markdown_content)
     posts_headers_and_thumbnails = get_headers_and_thumbnails("posts")
     projects_headers_and_thumbnails = get_headers_and_thumbnails("projects")
     return {

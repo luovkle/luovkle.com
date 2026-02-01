@@ -14,6 +14,8 @@ app/static/css/styles.css
 app/static/css/highlight.css
 app/static/**/*.webp
 app/static/**/*.avif
+app/static/images/posts/
+app/static/images/projects/
 
 # Content
 content/**/test_*

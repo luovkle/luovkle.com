@@ -50,7 +50,7 @@
         <div class="flex justify-between items-center">
           <div class="flex gap-4 text-neutral-400">
             <span>{{ post.reading_time }}</span>
-            <span>{{ post.date }}</span>
+            <span>{{ post.publish_date }}</span>
           </div>
           <div>
             <button id="share-btn"
@@ -67,8 +67,8 @@
             </div>
           </div>
         </div>
-        {% if post.content %}
-          <div class="text-lg space-y-10">{{ post.content|safe }}</div>
+        {% if post.body %}
+          <div class="text-lg space-y-10">{{ post.body|safe }}</div>
         {% endif %}
       </div>
     </div>

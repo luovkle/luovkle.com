@@ -14,7 +14,7 @@ PROJECTS_CONTENT_DIR = _CONTENT_DIR / "projects"
 
 # Static assets configuration
 STATIC_DIR = _BASE_DIR / "app" / "static"
-STATIC_PREFIX = "static/"
+STATIC_PREFIX = "/static/"
 _ANSI_DIR = _BASE_DIR / "app" / "ansi"
 
 # Directories for images

@@ -3,9 +3,12 @@ import re
 import shutil
 from datetime import datetime
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from app.config import IMAGES_DIR
-from app.schemas import ContentContext
+from app.schemas import ContentContext, MarkdownContent
 
 
 def get_slug(md_file: Path) -> str:
@@ -187,3 +190,17 @@ def get_content_context(path: Path) -> ContentContext:
         return ContentContext(index_file=path, content_type=path.parent.stem)
     # Unsupported path types are explicitly rejected.
     raise ValueError(f"Unsupported path type: {path!s}")
+
+
+def load_generic_markdown_content(md_file: Path) -> dict[str, Any]:
+    md_content = md_file.read_text(encoding="utf-8")
+    raw_metadata, raw_body = split_markdown_file(md_content)
+    metadata = yaml.safe_load(raw_metadata)
+    if not metadata:
+        raise KeyError("No properties found in metadata")
+    return {**metadata, "body": raw_body}
+
+
+def load_markdown_content(md_file: Path) -> MarkdownContent:
+    generic_markdown_content = load_generic_markdown_content(md_file)
+    return MarkdownContent(**generic_markdown_content)

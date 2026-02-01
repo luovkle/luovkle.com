@@ -12,7 +12,7 @@ class ContentMD(BaseModel):
     content: str | None = None
 
 
-class MetadataMD(ContentMD):
+class MetadataMD(BaseModel):
     # SEO
     description: str
     keywords: list[str] = Field(min_length=1)
@@ -46,12 +46,12 @@ class MetadataMD(ContentMD):
         return ", ".join(robots)
 
 
-class HomepageMD(ContentMD):
+class HomepageMD(BaseModel):
     posts_section_description: str
     projects_section_description: str
 
 
-class AuthorMD(ContentMD):
+class AuthorMD(BaseModel):
     picture: str
     full_name: str
     role: str
@@ -106,6 +106,45 @@ class Content(BaseModel):
 
     title: str | None = None
     content: str
+
+
+class MarkdownContent(BaseModel):
+    title: str
+    description: str | None = None
+    repository: str | None = None
+    website: HttpUrl | None = None
+    slug: str | None = None
+    date: str | None = None
+    topic: str | None = None
+    body: str | None = None
+
+
+class TemplateArgs(BaseModel):
+    code: bool = False
+
+
+class PublishedContent(MarkdownContent):
+    thumbnail_path: Path
+    cover_image_path: Path
+    reading_time_minutes: int
+    publish_date: str
+    extras: dict | None = None
+
+    @computed_field
+    @property
+    def reading_time(self) -> str:
+        suffix = "min" if self.reading_time_minutes == 1 else "mins"
+        return f"{self.reading_time_minutes} {suffix}"
+
+    @computed_field
+    @property
+    def cover_image(self) -> str:
+        return str(self.cover_image_path)
+
+    @computed_field
+    @property
+    def thumbnail(self) -> str:
+        return str(self.thumbnail_path)
 
 
 class CoverUrls(BaseModel):
