@@ -84,12 +84,47 @@ def update_base_html(html):
     code_blocks = soup.find_all("code")
     if len(code_blocks) >= 1:
         extras["code"] = True
-    # Update anchor tags
+    # Update <a> tags
     tags = soup.find_all("a")
     for tag in tags:
         tag.attrs["class"] = "text-sky-500 font-bold"  # type: ignore
         tag.attrs["target"] = "_blank"  # type: ignore
         tag.attrs["rel"] = "noopener noreferrer"  # type: ignore
+    # Update <h1> tags
+    for tag in soup.find_all("h1"):
+        tag.attrs["class"] = "text-4xl font-black"
+    # Update <h2> tags
+    for tag in soup.find_all("h2"):
+        tag.attrs["class"] = "text-3xl font-black"
+    # Update <h3> tags
+    for tag in soup.find_all("h3"):
+        tag.attrs["class"] = "text-2xl font-black"
+    # Update <h4> tags
+    for tag in soup.find_all("h4"):
+        tag.attrs["class"] = "text-xl font-black"
+    # Update <h5> tags
+    for tag in soup.find_all("h5"):
+        tag.attrs["class"] = "text-xl font-bold"
+    # Update <h6> tags
+    for tag in soup.find_all("h6"):
+        tag.attrs["class"] = "text-lg font-bold"
+    # Update <blockquote> tags
+    for tag in soup.find_all("blockquote"):
+        tag.attrs["class"] = (
+            "bg-neutral-900 px-4 py-2 italic rounded-md text-base font-medium"
+        )
+    # Update <ul> tags
+    for tag in soup.find_all("ul"):
+        tag.attrs["class"] = "ps-5 space-y-1 list-disc list-inside"
+    # Update <li> tags
+    for tag in soup.find_all("ol"):
+        tag.attrs["class"] = "ps-5 space-y-1 list-decimal list-inside"
+    # Update <img> tags
+    for tag in soup.find_all("img"):
+        tag.attrs["class"] = "mx-auto"
+    # Update <pre> tags
+    for tag in soup.find_all("pre"):
+        tag.attrs["class"] = "py-3 px-3 text-md overflow-x-auto"
     return {"content": str(soup), "extras": extras}
 
 
