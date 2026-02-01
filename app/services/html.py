@@ -62,7 +62,7 @@ def collect_relative_image_urls(
     return CoverUrls(**cover_urls)
 
 
-def get_cover_urls(covers_path: Path, title: str) -> "CoverUrls":
+def _get_cover_urls(covers_path: Path, title: str) -> "CoverUrls":
     #
     number_of_covers = len(list(covers_path.glob("*.png")))
     cover_number = get_cover_number(len(title), number_of_covers)
@@ -75,8 +75,8 @@ def get_cover_urls(covers_path: Path, title: str) -> "CoverUrls":
 
 def get_headers_and_thumbnails(title: str) -> HeadersAndThumbnailsDict:
     return {
-        "headers": get_cover_urls(HEADERS_DIR, title),
-        "thumbnails": get_cover_urls(THUMBNAILS_DIR, title),
+        "headers": _get_cover_urls(HEADERS_DIR, title),
+        "thumbnails": _get_cover_urls(THUMBNAILS_DIR, title),
     }
 
 
