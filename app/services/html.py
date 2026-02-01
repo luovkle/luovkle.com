@@ -1,5 +1,6 @@
 from functools import cache
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import markdown
 import yaml
@@ -11,6 +12,7 @@ from app.config import (
     COVER_FILENAME_TEMPLATE,
     HEADERS_DIR,
     HOMEPAGE_CONTENT_FILE,
+    IMAGES_DIR,
     IMAGES_RELATIVE_DIR,
     META_CONTENT_FILE,
     POSTS_CONTENT_DIR,
@@ -18,13 +20,22 @@ from app.config import (
     STATIC_RELATIVE_DIR,
     THUMBNAILS_DIR,
 )
-from app.schemas import AuthorMD, HomepageMD, MetadataMD, PostMD, ProjectMD
+from app.schemas import (
+    AuthorMD,
+    Content,
+    ContentContext,
+    HomepageMD,
+    MetadataMD,
+    PostMD,
+    ProjectMD,
+)
 from app.services.common import (
     estimate_reading_time,
     find_markdown_files,
     get_cover_number,
     get_creation_date,
     get_slug,
+    move_image,
     split_markdown_file,
 )
 
@@ -126,6 +137,94 @@ def update_base_html(html):
     for tag in soup.find_all("pre"):
         tag.attrs["class"] = "py-3 px-3 text-md overflow-x-auto"
     return {"content": str(soup), "extras": extras}
+
+
+def _is_external_url(src: str) -> bool:
+    """Determine whether the given string is an absolute (external) URL.
+
+    An external URL is considered one that includes a scheme (e.g., http/https),
+    and:
+      - has a network location (netloc), or
+      - uses a scheme like `data:` or `mailto:` which is absolute by definition.
+
+    Args:
+        src: URL or path string to evaluate.
+
+    Returns:
+        True if `src` is an absolute/external URL, otherwise False.
+
+    Raises:
+        ValueError: If `src` is not a string or is empty/whitespace.
+    """
+    if type(src) is not str:
+        raise ValueError(f"Expected a string, got {type(src).__name__!r}")
+    if not src.strip():
+        raise ValueError("URL source cannot be empty or only whitespace")
+    parts = urlsplit(src)
+    if parts.scheme:
+        if parts.netloc or parts.scheme in {"data", "mailto"}:
+            return True
+    return False
+
+
+def load_content(content_context: ContentContext) -> Content:
+    """Render a content item from Markdown and rewrite local image paths.
+
+    Steps:
+      1. Compute a title from the file or parent directory name.
+      2. Render Markdown to HTML.
+      3. If images are present in the context, copy them to the static dir.
+      4. Parse the HTML and rewrite `<img src="...">` for local images to use
+         `url_for('static', path=...)`.
+
+    Args:
+        content_context: The ContentContext describing the item to render.
+
+    Returns:
+        A Content model with the final HTML and an optional title.
+
+    Raises:
+        FileNotFoundError: If the context's index file does not exist.
+        ValueError: If image rewriting hits unsupported paths (rare).
+        OSError: For filesystem-related errors during image copying.
+    """
+    index_path: Path = content_context.index_file
+    if not index_path.is_file():
+        raise FileNotFoundError(f"index file not found: {index_path!s}")
+    # Derive a human-friendly title from the filename or the directory name.
+    content_title = (
+        index_path.parent.stem if content_context.is_dir else index_path.stem
+    )
+    # Convert Markdown to HTML (no extra extensions enabled here by design).
+    md_content = content_context.index_file.read_text(encoding="utf-8")
+    html_content = markdown.markdown(md_content)
+    # If the context provides images, copy them into the static images directory.
+    if content_context.img_files:
+        move_image(content_context)
+    # Parse rendered HTML to find and rewrite image sources when they are local.
+    soup = BeautifulSoup(html_content, "html.parser")
+    imgs = soup.find_all("img")
+    # Use the directory containing the index file to compute a unique static path.
+    directory = content_context.index_file.parent
+    for img in imgs:
+        img_src_raw = img.get("src")
+        img_src_str = str(img_src_raw)  # Normalize to string for checks.
+        # Skip empty sources or external URLs (keep as-is).
+        if not img_src_raw or _is_external_url(img_src_str):
+            continue
+        # Only use the filename part to avoid leaking nested relative paths.
+        src_name = Path(img_src_str).name
+        # Destination: /static/images/<content_type>/<dir_name>/<src_name>
+        dest = IMAGES_DIR / content_context.content_type / directory.name / src_name
+        # Try to generate a path relative to the static root to feed url_for().
+        try:
+            rel = dest.relative_to(STATIC_RELATIVE_DIR).as_posix()
+        except ValueError:
+            # Fallback to a POSIX-style path if relative computation fails.
+            rel = dest.as_posix()
+        # Inject a Jinja expression that FastAPI will resolve at render time.
+        img["src"] = "{{ url_for('static', path='" + rel + "') }}"
+    return Content(title=content_title, content=str(soup))
 
 
 def get_data_from_markdown_file(md_file: Path):
