@@ -24,6 +24,7 @@ from app.schemas import (
     AuthorMD,
     Content,
     ContentContext,
+    CoverUrls,
     HomepageMD,
     MetadataMD,
     PostMD,
@@ -38,6 +39,7 @@ from app.services.common import (
     move_image,
     split_markdown_file,
 )
+from app.types import HeadersAndThumbnailsDict
 
 
 def get_alternative_file_formats(original_file_path: Path) -> dict[str, Path]:
@@ -50,16 +52,17 @@ def get_alternative_file_formats(original_file_path: Path) -> dict[str, Path]:
 
 
 def collect_relative_image_urls(
-    default_path: Path, alternative_paths: dict[str, Path]
-) -> dict[str, str | None]:
+    default_path: Path,
+    alternative_paths: dict[str, Path],
+) -> "CoverUrls":
     cover_paths = {"default": default_path, **alternative_paths}
-    cover_urls = {}
+    cover_urls: dict[str, Path] = {}
     for name, path in cover_paths.items():
-        cover_urls[name] = str(path.relative_to(STATIC_RELATIVE_DIR))
-    return cover_urls
+        cover_urls[name] = path.relative_to(STATIC_RELATIVE_DIR)
+    return CoverUrls(**cover_urls)
 
 
-def get_cover_urls(covers_path: Path, title: str) -> dict[str, str | None]:
+def get_cover_urls(covers_path: Path, title: str) -> "CoverUrls":
     #
     number_of_covers = len(list(covers_path.glob("*.png")))
     cover_number = get_cover_number(len(title), number_of_covers)
@@ -70,7 +73,7 @@ def get_cover_urls(covers_path: Path, title: str) -> dict[str, str | None]:
     return collect_relative_image_urls(default_cover_path, alt_cover_paths)
 
 
-def get_headers_and_thumbnails(title: str) -> dict[str, dict[str, str | None]]:
+def get_headers_and_thumbnails(title: str) -> HeadersAndThumbnailsDict:
     return {
         "headers": get_cover_urls(HEADERS_DIR, title),
         "thumbnails": get_cover_urls(THUMBNAILS_DIR, title),
@@ -248,7 +251,7 @@ def get_metadata_content():
     content_md = get_data_from_markdown_file(META_CONTENT_FILE)
     metadata_md = MetadataMD(**content_md)
     headers_and_thumbnails = get_headers_and_thumbnails(metadata_md.author)
-    default_thumbnail = headers_and_thumbnails["thumbnails"]["default"]
+    default_thumbnail = headers_and_thumbnails["thumbnails"].default_url
     return {
         **metadata_md.model_dump(),
         "og_image": metadata_md.og_image or default_thumbnail,
@@ -276,8 +279,8 @@ def get_posts_content():
         return {
             **post_md.model_dump(),
             "slug": post_md.slug or get_slug(path),
-            "cover_image": headers_and_thumbnails["headers"]["default"],
-            "thumbnail": headers_and_thumbnails["thumbnails"]["default"],
+            "cover_image": headers_and_thumbnails["headers"].default_url,
+            "thumbnail": headers_and_thumbnails["thumbnails"].default_url,
             "reading_time": f"{estimate_reading_time(post_md.content)} min",
             "date": post_md.date or get_creation_date(path),
         }
@@ -298,8 +301,8 @@ def get_projects_content():
         return {
             **project_md.model_dump(),
             "slug": project_md.slug or get_slug(path),
-            "cover_image": headers_and_thumbnails["headers"]["default"],
-            "thumbnail": headers_and_thumbnails["thumbnails"]["default"],
+            "cover_image": headers_and_thumbnails["headers"].default_url,
+            "thumbnail": headers_and_thumbnails["thumbnails"].default_url,
             "reading_time": f"{estimate_reading_time(project_md.content)} min",
             "date": project_md.date or get_creation_date(path),
         }

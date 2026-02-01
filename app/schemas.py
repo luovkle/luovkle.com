@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import BaseModel, Field, HttpUrl, field_serializer
+from pydantic import BaseModel, Field, HttpUrl, computed_field, field_serializer
 
 
 class Extras(BaseModel):
@@ -106,3 +106,24 @@ class Content(BaseModel):
 
     title: str | None = None
     content: str
+
+
+class CoverUrls(BaseModel):
+    default: Path
+    avif: Path | None = None
+    webp: Path | None = None
+
+    @computed_field
+    @property
+    def default_url(self) -> str:
+        return str(self.default)
+
+    @computed_field
+    @property
+    def avif_url(self) -> str | None:
+        return str(self.avif) if self.avif else None
+
+    @computed_field
+    @property
+    def webp_url(self) -> str | None:
+        return str(self.webp) if self.webp else None
