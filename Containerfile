@@ -6,9 +6,10 @@ WORKDIR /www/
 # Then, add the dependency management files and install it
 COPY ./package.json ./pnpm-lock.yaml /www/
 RUN pnpm i --frozen-lockfile
-# Copy the asset and template files for CSS processing
+# Copy asset, template, and HTML service files for CSS processing
 COPY ./app/assets/ /www/app/assets/
 COPY ./app/templates/ /www/app/templates/
+COPY ./app/services/html.py /www/app/services/html.py
 # Build the CSS files with pnpm
 RUN pnpm build:css
 
