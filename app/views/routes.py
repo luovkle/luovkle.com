@@ -44,7 +44,7 @@ def post_ansi_detail(slug: str):
     post = content["posts"].get(slug)
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    return render_ansi_template("post_template", **post)
+    return render_ansi_template("post_template", **post.model_dump())
 
 
 def project_html_detail(request: Request, slug: str):
@@ -61,7 +61,7 @@ def project_ansi_detail(slug: str):
     project = content["projects"].get(slug)
     if not project:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    return render_ansi_template("project_template", **project)
+    return render_ansi_template("project_template", **project.model_dump())
 
 
 def internal_exception(request: Request):

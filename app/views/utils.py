@@ -12,7 +12,7 @@ POST_ANSI_TEMPLATE = """
 
 \033[90m{{ reading_time }}\t{{ date }}\033[0m
 
-{{ content }}\n
+{{ body }}\n
 """
 
 PROJECT_ANSI_TEMPLATE = """
@@ -22,7 +22,7 @@ PROJECT_ANSI_TEMPLATE = """
 
 \033[90m{{ reading_time }}\t{{ date }}\033[0m
 
-{{ content }}
+{{ body }}
 
 {% if repository %}\033[1;97mRepository:\033[0m {{ repository }}{% endif %}
 

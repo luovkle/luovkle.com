@@ -96,18 +96,6 @@ class ContentContext(BaseModel):
     content_type: str
 
 
-class Content(BaseModel):
-    """Rendered content payload.
-
-    Attributes:
-        title: Optional title extracted from the file or directory name.
-        content: HTML rendered from Markdown, with image paths rewritten if needed.
-    """
-
-    title: str | None = None
-    content: str
-
-
 class MarkdownContent(BaseModel):
     title: str
     description: str | None = None
@@ -166,3 +154,26 @@ class CoverUrls(BaseModel):
     @property
     def webp_url(self) -> str | None:
         return str(self.webp) if self.webp else None
+
+
+class GenericANSIContent(BaseModel):
+    slug: str
+    header: str
+    title: str
+    publish_date: str
+    body: str | None = None
+    reading_time_minutes: int
+
+    @computed_field
+    @property
+    def reading_time(self) -> str:
+        suffix = "min" if self.reading_time_minutes == 1 else "mins"
+        return f"{self.reading_time_minutes} {suffix}"
+
+
+class PostANSIContent(GenericANSIContent): ...
+
+
+class ProjectANSIContent(GenericANSIContent):
+    repository: str | None = None
+    website: str | None = None

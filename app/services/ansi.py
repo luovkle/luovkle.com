@@ -1,7 +1,6 @@
 from functools import cache
 from pathlib import Path
 
-import yaml
 from rich.console import Console
 from rich.markdown import Markdown
 
@@ -12,15 +11,23 @@ from app.config import (
     POSTS_CONTENT_DIR,
     PROJECTS_CONTENT_DIR,
 )
-from app.schemas import PostMD, ProjectMD
+from app.schemas import (
+    ContentContext,
+    GenericANSIContent,
+    PostANSIContent,
+    ProjectANSIContent,
+)
 from app.services.common import (
     estimate_reading_time,
-    find_markdown_files,
+    get_content_context,
+    get_content_objects,
     get_cover_number,
     get_creation_date,
     get_slug,
-    split_markdown_file,
+    load_markdown_content,
+    move_image,
 )
+from app.types import ANSIContent
 
 
 def get_ansi_header_path(title: str) -> Path:
@@ -39,66 +46,75 @@ def render_markdown_to_ansi(md_content: str, width: int = 79) -> str:
     return cap.get()
 
 
-def load_data_from_md_file(md_file: Path) -> dict:
-    md_content = md_file.read_text(encoding="utf-8")
-    raw_metadata, raw_body = split_markdown_file(md_content)
-    metadata = yaml.safe_load(raw_metadata)
-    if not metadata:
-        raise KeyError("No properties found in metadata")
-    ansi_content = render_markdown_to_ansi(raw_body)
-    return {**metadata, "content": ansi_content, "extras": {}}
-
-
-def get_post_data_from_md_file(md_file: Path) -> dict:
-    md_data = load_data_from_md_file(md_file)
-    md_post = PostMD(**md_data)
-    slug = md_post.slug or get_slug(md_file)
-    header_path = get_ansi_header_path(md_post.title)
+def _get_generic_ansi_content(
+    content_context: ContentContext,
+) -> GenericANSIContent:
+    index_path: Path = content_context.index_file
+    if not index_path.is_file():
+        raise FileNotFoundError(f"index file not found: {index_path!s}")
+    # Derive a human-friendly title from the filename or the directory name.
+    title = index_path.parent.stem if content_context.is_dir else index_path.stem
+    # If the context provides images, copy them into the static images directory.
+    if content_context.img_files:
+        move_image(content_context)
+    # Load markdown content and metadata from the source file
+    markdown_content = load_markdown_content(content_context.index_file)
+    # Parse markdown only if a body exists; otherwise use safe defaults
+    if markdown_content.body:
+        body = render_markdown_to_ansi(markdown_content.body)
+    else:
+        body = None
+    # Resolve derived fields and fallbacks
+    slug = markdown_content.slug or get_slug(content_context.index_file)
+    reading_time_minutes = estimate_reading_time(markdown_content.body)
+    publish_date = markdown_content.date or get_creation_date(
+        content_context.index_file
+    )
+    header_path = get_ansi_header_path(title)
     header = header_path.read_text(encoding="utf-8")
-    reading_time = f"{estimate_reading_time(md_post.content)} min"
-    date = md_post.date or get_creation_date(md_file)
-    return {
-        **md_post.model_dump(),
+    # Assemble final payload for the published content model
+    generic_ansi_content_dict = {
+        **markdown_content.model_dump(),
         "slug": slug,
         "header": header,
-        "reading_time": reading_time,
-        "date": date,
+        "title": title,
+        "reading_time_minutes": reading_time_minutes,
+        "publish_date": publish_date,
+        "body": body,
     }
+    return GenericANSIContent(**generic_ansi_content_dict)
 
 
-def get_project_data_from_md_file(md_file: Path) -> dict:
-    md_data = load_data_from_md_file(md_file)
-    md_project = ProjectMD(**md_data)
-    slug = md_project.slug or get_slug(md_file)
-    header_path = get_ansi_header_path(md_project.title)
-    header = header_path.read_text(encoding="utf-8")
-    reading_time = f"{estimate_reading_time(md_project.content)} min"
-    date = md_project.date or get_creation_date(md_file)
-    return {
-        **md_project.model_dump(),
-        "slug": slug,
-        "header": header,
-        "reading_time": reading_time,
-        "date": date,
-    }
+def _get_post_ansi_content(content_context: ContentContext) -> PostANSIContent:
+    generic_ansi_content = _get_generic_ansi_content(content_context)
+    return PostANSIContent(**generic_ansi_content.model_dump())
 
 
-def get_posts_data() -> dict:
-    posts = {}
-    for md_file in find_markdown_files(POSTS_CONTENT_DIR):
-        data = get_post_data_from_md_file(md_file)
-        posts[data["slug"]] = data
+def _get_project_ansi_content(
+    content_context: ContentContext,
+) -> ProjectANSIContent:
+    generic_ansi_content = _get_generic_ansi_content(content_context)
+    return ProjectANSIContent(**generic_ansi_content.model_dump())
+
+
+def get_posts_content() -> dict[str, PostANSIContent]:
+    posts: dict[str, PostANSIContent] = {}
+    for content_obj in get_content_objects(POSTS_CONTENT_DIR):
+        content_context = get_content_context(content_obj)
+        content = _get_post_ansi_content(content_context)
+        posts[content.slug] = content
     return posts
 
 
-def get_projects_data() -> dict:
-    projects = {}
-    for md_file in find_markdown_files(PROJECTS_CONTENT_DIR):
-        data = get_project_data_from_md_file(md_file)
-        projects[data["slug"]] = data
+def get_projects_content() -> dict[str, ProjectANSIContent]:
+    projects: dict[str, ProjectANSIContent] = {}
+    for content_obj in get_content_objects(PROJECTS_CONTENT_DIR):
+        content_context = get_content_context(content_obj)
+        content = _get_project_ansi_content(content_context)
+        projects[content.slug] = content
     return projects
 
 
 @cache
-def get_ansi_content() -> dict[str, dict]:
-    return {"posts": get_posts_data(), "projects": get_projects_data()}
+def get_ansi_content() -> ANSIContent:
+    return {"posts": get_posts_content(), "projects": get_projects_content()}

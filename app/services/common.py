@@ -34,12 +34,6 @@ def get_cover_number(n: int, max: int) -> int:
     return n
 
 
-def find_markdown_files(dir: Path) -> list[Path]:
-    if not dir.is_dir():
-        return []
-    return list(dir.glob("*.md"))
-
-
 def split_markdown_file(md_content: str) -> tuple[str, str]:
     metadata_pattern = r"^---\s*\n(.*?)\n---\s*\n(.*)$"
     match = re.match(metadata_pattern, md_content, re.DOTALL)
@@ -48,12 +42,14 @@ def split_markdown_file(md_content: str) -> tuple[str, str]:
     return match.group(1), match.group(2)
 
 
-def move_image(content_context: ContentContext) -> list[Path]:
+def move_image(
+    content_context: ContentContext, force_overwrite: bool = False
+) -> list[Path]:
     """Copy image assets from `<dir>/images` into the static images tree.
 
-    This function rebuilds the destination directory (removes any previous
-    folder of the same name), then copies all files found in the source images
-    directory.
+    If the destination directory already exists and `force_overwrite` is False,
+    the function does not copy anything and returns the expected destination
+    paths based on the source filenames.
 
     Note:
         The function name says "move", but the operation performed is a copy
@@ -62,9 +58,12 @@ def move_image(content_context: ContentContext) -> list[Path]:
     Args:
         content_context: A ContentContext referencing the `index_file` and the
             content type.
+        force_overwrite: If True, rebuild the destination directory and copy
+            images even if the destination already exists.
 
     Returns:
-        A list of destination Paths for the copied images.
+        A list of destination Paths for the copied images (or the expected
+        destination paths when skipping the copy).
 
     Raises:
         NotADirectoryError: If the base content directory is invalid or if
@@ -85,8 +84,16 @@ def move_image(content_context: ContentContext) -> list[Path]:
         raise NotADirectoryError(
             f"'{images_content_dir.name}' exists but is not a directory"
         )
+    # Find files (non-recursive) to copy from the source images directory.
+    image_content_items = list(images_content_dir.iterdir())
+    if not image_content_items:
+        raise FileNotFoundError(f"No image files found in {images_content_dir}")
     # Destination: /static/images/<content_type>/<dir_name>
     images_static_dir = IMAGES_DIR / content_context.content_type / directory.name
+    # If the destination already exists and overwrite is disabled, skip copying
+    # and return the expected destination paths.
+    if images_static_dir.exists() and not force_overwrite:
+        return [Path(images_static_dir / src.name) for src in image_content_items]
     # If the destination exists, remove it to ensure a clean state.
     if images_static_dir.exists():
         if images_static_dir.is_dir():
@@ -97,16 +104,12 @@ def move_image(content_context: ContentContext) -> list[Path]:
             raise ValueError(f"Unsupported path type: {images_static_dir!s}")
     # Create a fresh destination directory (with parents).
     images_static_dir.mkdir(parents=True, exist_ok=False)
-    # Find files (non-recursive) to copy from the source images directory.
-    image_content_items = list(images_content_dir.iterdir())
-    if not image_content_items:
-        raise FileNotFoundError(f"No image files found in {images_content_dir}")
     # Copy images to the destination. Track destination paths for the return.
     dst_paths: list[Path] = []
     for src in image_content_items:
         dst = images_static_dir / src.name
-        moved_path_str = shutil.copy(src, dst)
-        dst_paths.append(Path(moved_path_str))
+        copied_path_str = shutil.copy(src, dst)
+        dst_paths.append(Path(copied_path_str))
     return dst_paths
 
 
