@@ -6,28 +6,32 @@ from jinja2 import Template
 CLI_USER_AGENT_PATTERN = re.compile(r"\b(?:curl|httpie|wget)/[^\s]+\b", re.IGNORECASE)
 
 POST_ANSI_TEMPLATE = """
-{{ header }}
+{{ post.header }}
 
-\033[1;97m{{ title }}\033[0m
+\033[1;97m{{ post.title }}\033[0m
 
-\033[90m{{ reading_time }}\t{{ publish_date }}\033[0m
+\033[90m{{ author.full_name }}\033[0m
 
-{{ body }}\n
+\033[90m{{ post.reading_time }}\t{{ post.publish_date }}\033[0m
+
+{{ post.body }}\n
 """
 
 PROJECT_ANSI_TEMPLATE = """
-{{ header }}
+{{ project.header }}
 
-\033[1;97m{{ title }}\033[0m
+\033[1;97m{{ project.title }}\033[0m
 
-\033[90m{{ reading_time }}\t{{ publish_date }}\033[0m
+\033[90m{{ author.full_name }}\033[0m
 
-{{ body }}
+\033[90m{{ project.reading_time }}\t{{ project.publish_date }}\033[0m
 
-{% if repository %}\033[1;97mRepository:\033[0m {{ repository }}{% endif %}
+{{ project.body }}
 
-{% if website %}\033[1;97mWebsite:\033[0m {{ website }}{% endif %}\n
-"""
+{% if project.repository %}\033[1;97mRepository:\033[0m {{ project.repository }}{% endif %}
+
+{% if project.website %}\033[1;97mWebsite:\033[0m {{ project.website }}{% endif %}\n
+"""  # noqa: E501
 
 ANSITemplateName = Literal["post_template", "project_template"]
 
@@ -36,7 +40,7 @@ def is_cli_user_agent(headers: str) -> bool:
     return bool(CLI_USER_AGENT_PATTERN.search(headers))
 
 
-def render_ansi_template(template_name: ANSITemplateName, **context: Any):
+def render_ansi_template(template_name: ANSITemplateName, context: dict[str, Any]):
     if template_name == "post_template":
         template = Template(POST_ANSI_TEMPLATE)
     elif template_name == "project_template":

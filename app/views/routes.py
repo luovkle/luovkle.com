@@ -35,7 +35,11 @@ def post_html_detail(request: Request, slug: str):
     post = content["posts"].get(slug)
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    context = {"metadata": content["metadata"], "post": post}
+    context = {
+        "metadata": content["metadata"],
+        "author": content["author"],
+        "post": post,
+    }
     return templates.TemplateResponse(request, "post_detail.html", context=context)
 
 
@@ -44,7 +48,9 @@ def post_ansi_detail(slug: str):
     post = content["posts"].get(slug)
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    return render_ansi_template("post_template", **post.model_dump())
+    author = get_content()["author"]
+    context = {"post": post, "author": author}
+    return render_ansi_template("post_template", context)
 
 
 def project_html_detail(request: Request, slug: str):
@@ -52,7 +58,11 @@ def project_html_detail(request: Request, slug: str):
     project = content["projects"].get(slug)
     if not project:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    context = {"metadata": content["metadata"], "project": project}
+    context = {
+        "metadata": content["metadata"],
+        "author": content["author"],
+        "project": project,
+    }
     return templates.TemplateResponse(request, "project_detail.html", context)
 
 
@@ -61,7 +71,9 @@ def project_ansi_detail(slug: str):
     project = content["projects"].get(slug)
     if not project:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
-    return render_ansi_template("project_template", **project.model_dump())
+    author = get_content()["author"]
+    context = {"project": project, "author": author}
+    return render_ansi_template("project_template", context)
 
 
 def internal_exception(request: Request):
