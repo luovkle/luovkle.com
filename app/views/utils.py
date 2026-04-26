@@ -1,9 +1,6 @@
-import re
 from typing import Any, Literal
 
 from jinja2 import Template
-
-CLI_USER_AGENT_PATTERN = re.compile(r"\b(?:curl|httpie|wget)/[^\s]+\b", re.IGNORECASE)
 
 POST_ANSI_TEMPLATE = """
 {{ post.header }}
@@ -34,10 +31,6 @@ PROJECT_ANSI_TEMPLATE = """
 """  # noqa: E501
 
 ANSITemplateName = Literal["post_template", "project_template"]
-
-
-def is_cli_user_agent(headers: str) -> bool:
-    return bool(CLI_USER_AGENT_PATTERN.search(headers))
 
 
 def render_ansi_template(template_name: ANSITemplateName, context: dict[str, Any]):

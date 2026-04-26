@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from app.services.ansi import get_ansi_content
 from app.services.html import get_content
-from app.views.utils import is_cli_user_agent, render_ansi_template
+from app.views.deps import is_cli_client
+from app.views.utils import render_ansi_template
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
@@ -121,8 +122,12 @@ async def post_list(request: Request):
 
 
 @router.get("/p/{slug}", response_class=HTMLResponse)
-async def post_detail(request: Request, slug: str):
-    if is_cli_user_agent(str(request.headers.get("User-Agent"))):
+async def post_detail(
+    request: Request,
+    slug: str,
+    cli_client: Annotated[bool, Depends(is_cli_client)],
+):
+    if cli_client:
         return post_ansi_detail(slug)
     return post_html_detail(request, slug)
 
@@ -139,8 +144,12 @@ async def project_list(request: Request):
 
 
 @router.get("/pr/{slug}", response_class=HTMLResponse)
-async def project_detail(request: Request, slug: str):
-    if is_cli_user_agent(str(request.headers.get("User-Agent"))):
+async def project_detail(
+    request: Request,
+    slug: str,
+    cli_client: Annotated[bool, Depends(is_cli_client)],
+):
+    if cli_client:
         return project_ansi_detail(slug)
     return project_html_detail(request, slug)
 
