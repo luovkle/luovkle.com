@@ -198,8 +198,6 @@ def _get_published_content(content_context: ContentContext) -> PublishedContent:
     index_path: Path = content_context.index_file
     if not index_path.is_file():
         raise FileNotFoundError(f"index file not found: {index_path!s}")
-    # Derive a human-friendly title from the filename or the directory name.
-    title = index_path.parent.stem if content_context.is_dir else index_path.stem
     # If the context provides images, copy them into the static images directory.
     if content_context.img_files:
         move_image(content_context)
@@ -223,7 +221,7 @@ def _get_published_content(content_context: ContentContext) -> PublishedContent:
     )
     # Assemble final payload for the published content model
     return PublishedContent(
-        title=title,
+        title=markdown_content.title,
         description=markdown_content.description,
         repository=markdown_content.repository,
         website=markdown_content.website,

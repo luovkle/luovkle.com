@@ -52,8 +52,6 @@ def _get_generic_ansi_content(
     index_path: Path = content_context.index_file
     if not index_path.is_file():
         raise FileNotFoundError(f"index file not found: {index_path!s}")
-    # Derive a human-friendly title from the filename or the directory name.
-    title = index_path.parent.stem if content_context.is_dir else index_path.stem
     # If the context provides images, copy them into the static images directory.
     if content_context.img_files:
         move_image(content_context)
@@ -70,14 +68,14 @@ def _get_generic_ansi_content(
     publish_date = markdown_content.date or get_creation_date(
         content_context.index_file
     )
-    header_path = get_ansi_header_path(title)
+    header_path = get_ansi_header_path(markdown_content.title)
     header = header_path.read_text(encoding="utf-8")
     # Assemble final payload for the published content model
     generic_ansi_content_dict = {
         **markdown_content.model_dump(),
         "slug": slug,
         "header": header,
-        "title": title,
+        "title": markdown_content.title,
         "reading_time_minutes": reading_time_minutes,
         "publish_date": publish_date,
         "body": body,
