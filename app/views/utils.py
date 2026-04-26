@@ -10,7 +10,7 @@ POST_ANSI_TEMPLATE = """
 
 \033[1;97m{{ title }}\033[0m
 
-\033[90m{{ reading_time }}\t{{ date }}\033[0m
+\033[90m{{ reading_time }}\t{{ publish_date }}\033[0m
 
 {{ body }}\n
 """
@@ -20,7 +20,7 @@ PROJECT_ANSI_TEMPLATE = """
 
 \033[1;97m{{ title }}\033[0m
 
-\033[90m{{ reading_time }}\t{{ date }}\033[0m
+\033[90m{{ reading_time }}\t{{ publish_date }}\033[0m
 
 {{ body }}
 
