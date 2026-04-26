@@ -6,6 +6,7 @@ from PIL import Image
 from cli.common import (
     get_input_paths,
     get_output_paths,
+    get_tasks,
     run_blocking_tasks_in_threads,
 )
 from cli.config import ANSI_HEADERS_DIR, HEADERS_DIR
@@ -54,13 +55,15 @@ def img_to_ansi(input_path: Path, output_path: Path, width: int = 79) -> None:
 async def main() -> None:
     # Collect all source image paths and matching ANSI output paths
     input_paths = get_input_paths(HEADERS_DIR)
-    ansi_io_paths = zip(
-        input_paths,
-        get_output_paths(input_paths, ".ansi", ANSI_HEADERS_DIR),
-        strict=False,
+    ansi_io_paths = list(
+        zip(
+            input_paths,
+            get_output_paths(input_paths, ".ansi", ANSI_HEADERS_DIR),
+            strict=False,
+        )
     )
     # Offload CPU-bound conversions to threads for non-blocking async execution
-    tasks = [(img_to_ansi, io_paths) for io_paths in ansi_io_paths]
+    tasks = get_tasks(img_to_ansi, ansi_io_paths)
     await run_blocking_tasks_in_threads(tasks)
 
 

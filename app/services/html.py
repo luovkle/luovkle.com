@@ -27,7 +27,6 @@ from app.schemas import (
     HomepageMD,
     MetadataMD,
     PublishedContent,
-    TemplateArgs,
 )
 from app.services.common import (
     estimate_reading_time,
@@ -40,7 +39,7 @@ from app.services.common import (
     load_markdown_content,
     move_image,
 )
-from app.types import HeadersAndThumbnailsDict
+from app.types import HeadersAndThumbnailsDict, ParsedMarkdownDict, TemplateArgsDict
 
 
 def get_alternative_file_formats(original_file_path: Path) -> dict[str, Path]:
@@ -120,14 +119,14 @@ def _is_external_url(src: str) -> bool:
     return False
 
 
-def _parse_markdown(content_context: ContentContext, body: str) -> dict:
+def _parse_markdown(content_context: ContentContext, body: str) -> ParsedMarkdownDict:
     # Convert Markdown to HTML (no extra extensions enabled here by design).
     html_content = markdown.markdown(
         body,
         extensions=["fenced_code", "codehilite"],
         output_format="html",
     )
-    template_args = {"code": False}
+    template_args: TemplateArgsDict = {"code": False}
     # Parse rendered HTML to find and rewrite image sources when they are local.
     soup = BeautifulSoup(html_content, "html.parser")
     imgs = soup.find_all("img")
@@ -211,7 +210,8 @@ def _get_published_content(content_context: ContentContext) -> PublishedContent:
         parsed_markdown = _parse_markdown(content_context, markdown_content.body)
         body, extras = parsed_markdown["content"], parsed_markdown["extras"]
     else:
-        body, extras = None, TemplateArgs().model_dump()
+        body = None
+        extras: TemplateArgsDict = {"code": False}
     # Resolve derived fields and fallbacks
     slug = markdown_content.slug or get_slug(content_context.index_file)
     headers_and_thumbnails = get_headers_and_thumbnails(markdown_content.title)
@@ -222,18 +222,20 @@ def _get_published_content(content_context: ContentContext) -> PublishedContent:
         content_context.index_file
     )
     # Assemble final payload for the published content model
-    published_content_dict = {
-        **markdown_content.model_dump(),
-        "title": title,
-        "slug": slug,
-        "publish_date": publish_date,
-        "body": body,
-        "extras": extras,
-        "cover_image_path": cover_image_path,
-        "thumbnail_path": thumbnail_path,
-        "reading_time_minutes": reading_time_minutes,
-    }
-    return PublishedContent(**published_content_dict)
+    return PublishedContent(
+        title=title,
+        description=markdown_content.description,
+        repository=markdown_content.repository,
+        website=markdown_content.website,
+        slug=slug,
+        topic=markdown_content.topic,
+        body=body,
+        thumbnail_path=thumbnail_path,
+        cover_image_path=cover_image_path,
+        reading_time_minutes=reading_time_minutes,
+        publish_date=publish_date,
+        extras=extras,
+    )
 
 
 def get_metadata_content():

@@ -2,6 +2,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, HttpUrl, computed_field, field_serializer
 
+from app.types import TemplateArgsDict
+
 
 class Extras(BaseModel):
     code: bool = False
@@ -107,16 +109,19 @@ class MarkdownContent(BaseModel):
     body: str | None = None
 
 
-class TemplateArgs(BaseModel):
-    code: bool = False
-
-
-class PublishedContent(MarkdownContent):
+class PublishedContent(BaseModel):
+    slug: str
+    title: str
+    body: str | None = None
+    description: str | None = None
+    repository: str | None = None
+    website: HttpUrl | None = None
+    topic: str | None = None
     thumbnail_path: Path
     cover_image_path: Path
     reading_time_minutes: int
     publish_date: str
-    extras: dict | None = None
+    extras: TemplateArgsDict
 
     @computed_field
     @property

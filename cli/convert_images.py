@@ -3,7 +3,12 @@ from pathlib import Path
 
 from PIL import Image
 
-from cli.common import get_input_paths, get_output_paths, run_blocking_tasks_in_threads
+from cli.common import (
+    get_input_paths,
+    get_output_paths,
+    get_tasks,
+    run_blocking_tasks_in_threads,
+)
 from cli.config import IMAGES_DIR
 
 
@@ -61,16 +66,16 @@ def img_to_avif(
 async def main() -> None:
     input_paths = get_input_paths(IMAGES_DIR)
     # Convert to WebP
-    webp_io_paths = zip(
-        input_paths, get_output_paths(input_paths, ".webp"), strict=False
+    webp_io_paths = list(
+        zip(input_paths, get_output_paths(input_paths, ".webp"), strict=False)
     )
-    tasks = [(img_to_webp, io_paths) for io_paths in webp_io_paths]
+    tasks = get_tasks(img_to_webp, webp_io_paths)
     await run_blocking_tasks_in_threads(tasks)
     # Convert to AVIF
-    avif_io_paths = zip(
-        input_paths, get_output_paths(input_paths, ".avif"), strict=False
+    avif_io_paths = list(
+        zip(input_paths, get_output_paths(input_paths, ".avif"), strict=False)
     )
-    tasks = [(img_to_avif, io_paths) for io_paths in avif_io_paths]
+    tasks = get_tasks(img_to_avif, avif_io_paths)
     await run_blocking_tasks_in_threads(tasks)
 
 

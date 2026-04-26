@@ -59,3 +59,9 @@ async def run_blocking_tasks_in_threads(
             loop.run_in_executor(executor, func, *args) for func, args in funcs_and_args
         ]
         await asyncio.gather(*tasks, return_exceptions=False)
+
+
+def get_tasks(
+    fn: Callable, io_paths: list[tuple[Path, Path]]
+) -> list[tuple[Callable, tuple]]:
+    return [(fn, paths) for paths in io_paths]

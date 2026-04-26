@@ -1,6 +1,9 @@
-from typing import TypedDict
+from __future__ import annotations
 
-from app.schemas import CoverUrls, PostANSIContent, ProjectANSIContent
+from typing import TYPE_CHECKING, TypedDict
+
+if TYPE_CHECKING:
+    from app.schemas import CoverUrls, PostANSIContent, ProjectANSIContent
 
 
 class HeadersAndThumbnailsDict(TypedDict):
@@ -11,3 +14,12 @@ class HeadersAndThumbnailsDict(TypedDict):
 class ANSIContent(TypedDict):
     posts: dict[str, PostANSIContent]
     projects: dict[str, ProjectANSIContent]
+
+
+class TemplateArgsDict(TypedDict):
+    code: bool
+
+
+class ParsedMarkdownDict(TypedDict):
+    content: str
+    extras: TemplateArgsDict
