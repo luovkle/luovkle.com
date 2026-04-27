@@ -1,12 +1,11 @@
-import re
 from typing import Annotated
 
 from fastapi import Header
 
-CLI_USER_AGENT_PATTERN = re.compile(r"\b(?:curl|httpie|wget)/[^\s]+\b", re.IGNORECASE)
+from app.views.utils import is_cli_client_by_user_agent
 
 
 def is_cli_client(user_agent: Annotated[str | None, Header()]) -> bool:
     if not user_agent:
         return False
-    return bool(CLI_USER_AGENT_PATTERN.search(user_agent))
+    return is_cli_client_by_user_agent(user_agent)

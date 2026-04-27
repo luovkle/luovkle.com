@@ -12,9 +12,9 @@ app.mount("/static/", StaticFiles(directory="app/static/"), name="static")
 
 @app.exception_handler(status.HTTP_500_INTERNAL_SERVER_ERROR)
 async def internal_exception_handler(request: Request, _: Exception):
-    return internal_exception(request)
+    return internal_exception(request, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @app.exception_handler(status.HTTP_404_NOT_FOUND)
 async def not_found_exception_handler(request: Request, _: Exception):
-    return not_found_exception(request)
+    return not_found_exception(request, status.HTTP_404_NOT_FOUND)

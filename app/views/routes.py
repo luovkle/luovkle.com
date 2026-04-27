@@ -4,13 +4,13 @@ from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 
 from app.services.ansi import get_ansi_content
 from app.services.html import get_content
 from app.views.deps import is_cli_client
-from app.views.utils import render_ansi_template
+from app.views.utils import is_cli_client_by_user_agent, render_ansi_template
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
@@ -77,25 +77,43 @@ def project_ansi_detail(slug: str):
     return render_ansi_template("project_template", context)
 
 
-def internal_exception(request: Request):
+def cli_user_wrapper(func):
+    def wrap(request: Request, status_code: int):
+        if is_cli_client_by_user_agent(str(request.headers.get("User-Agent"))):
+            if status_code == status.HTTP_404_NOT_FOUND:
+                template = "not_found_template"
+            else:
+                template = "unexpected_error_template"
+            return PlainTextResponse(
+                render_ansi_template(template),
+                status_code=status_code,
+            )
+        return func(request, status_code)
+
+    return wrap
+
+
+@cli_user_wrapper
+def internal_exception(request: Request, status_code: int):
     content = get_content()
     context = {"metadata": content["metadata"]}
     return templates.TemplateResponse(
         request,
         "500.html",
         context=context,
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        status_code=status_code,
     )
 
 
-def not_found_exception(request: Request):
+@cli_user_wrapper
+def not_found_exception(request: Request, status_code: int):
     content = get_content()
     context = {"metadata": content["metadata"]}
     return templates.TemplateResponse(
         request,
         "404.html",
         context=context,
-        status_code=status.HTTP_404_NOT_FOUND,
+        status_code=status_code,
     )
 
 
