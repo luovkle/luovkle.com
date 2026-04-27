@@ -129,13 +129,21 @@ async def home(request: Request):
 
 
 @router.get("/p", response_class=HTMLResponse)
-async def post_list(request: Request):
+async def post_list(
+    request: Request,
+    cli_client: Annotated[bool, Depends(is_cli_client)],
+):
     content = get_content()
     posts = list(content["posts"].values())
     context = {
         "metadata": content["metadata"],
         "posts": posts,
     }
+    if cli_client:
+        for post in context["posts"]:
+            url = str(request.url_for("post_detail", slug=post["slug"]))
+            post["url"] = url
+        return render_ansi_template("post_list_template", context)
     return templates.TemplateResponse(request, "post_list.html", context)
 
 
@@ -151,13 +159,21 @@ async def post_detail(
 
 
 @router.get("/pr", response_class=HTMLResponse)
-async def project_list(request: Request):
+async def project_list(
+    request: Request,
+    cli_client: Annotated[bool, Depends(is_cli_client)],
+):
     content = get_content()
     projects = list(content["projects"].values())
     context = {
         "metadata": content["metadata"],
         "projects": projects,
     }
+    if cli_client:
+        for project in context["projects"]:
+            url = str(request.url_for("project_detail", slug=project["slug"]))
+            project["url"] = url
+        return render_ansi_template("project_list_template", context)
     return templates.TemplateResponse(request, "project_list.html", context)
 
 
