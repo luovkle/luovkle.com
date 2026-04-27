@@ -58,7 +58,7 @@ $(NODE_STAMP): package.json pnpm-lock.yaml
 	@touch $@
 
 $(PRECOMMIT_STAMP): .pre-commit-config.yaml
-	pre-commit install
+	uvx prek install
 	@touch $@
 
 $(HIGHLIGHT_CSS): $(DEPS_STAMP)
@@ -109,7 +109,7 @@ lint: $(DEPS_STAMP)
 
 .PHONY: check
 check: $(DEPS_STAMP)
-	pre-commit run --all-files
+	uvx prek run --all-files
 
 .PHONY: setup
 setup: $(DEPS_STAMP) $(NODE_STAMP) $(PRECOMMIT_STAMP)
