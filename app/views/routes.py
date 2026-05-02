@@ -133,17 +133,19 @@ async def post_list(
     request: Request,
     cli_client: Annotated[bool, Depends(is_cli_client)],
 ):
+    if cli_client:
+        posts = [post.model_dump() for post in get_ansi_content()["posts"].values()]
+        context = {"posts": []}
+        for post in posts:
+            post["url"] = str(request.url_for("post_detail", slug=post["slug"]))
+            context["posts"].append(post)
+        return render_ansi_template("post_list_template", context)
     content = get_content()
     posts = list(content["posts"].values())
     context = {
         "metadata": content["metadata"],
         "posts": posts,
     }
-    if cli_client:
-        for post in context["posts"]:
-            url = str(request.url_for("post_detail", slug=post["slug"]))
-            post["url"] = url
-        return render_ansi_template("post_list_template", context)
     return templates.TemplateResponse(request, "post_list.html", context)
 
 
@@ -163,17 +165,23 @@ async def project_list(
     request: Request,
     cli_client: Annotated[bool, Depends(is_cli_client)],
 ):
+    if cli_client:
+        projects = [
+            project.model_dump() for project in get_ansi_content()["projects"].values()
+        ]
+        context = {"projects": []}
+        for project in projects:
+            project["url"] = str(
+                request.url_for("project_detail", slug=project["slug"])
+            )
+            context["projects"].append(project)
+        return render_ansi_template("project_list_template", context)
     content = get_content()
     projects = list(content["projects"].values())
     context = {
         "metadata": content["metadata"],
         "projects": projects,
     }
-    if cli_client:
-        for project in context["projects"]:
-            url = str(request.url_for("project_detail", slug=project["slug"]))
-            project["url"] = url
-        return render_ansi_template("project_list_template", context)
     return templates.TemplateResponse(request, "project_list.html", context)
 
 

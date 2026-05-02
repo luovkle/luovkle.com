@@ -6,8 +6,8 @@ from rich.markdown import Markdown
 
 from app.config import (
     ANSI_HEADERS_DIR,
+    ANSI_THUMBNAILS_DIR,
     COVER_ANSI_FILENAME_TEMPLATE,
-    HEADERS_DIR,
     POSTS_CONTENT_DIR,
     PROJECTS_CONTENT_DIR,
 )
@@ -30,11 +30,11 @@ from app.services.common import (
 from app.types import ANSIContent
 
 
-def get_ansi_header_path(title: str) -> Path:
-    number_of_covers = len(list(HEADERS_DIR.glob("*.png")))
+def get_ansi_cover_path(title: str, cover_dir: Path) -> Path:
+    number_of_covers = len(list(cover_dir.glob("*.ansi")))
     cover_number = get_cover_number(len(title), number_of_covers)
     cover_file = COVER_ANSI_FILENAME_TEMPLATE.format(cover_number)
-    return ANSI_HEADERS_DIR / cover_file
+    return cover_dir / cover_file
 
 
 def render_markdown_to_ansi(md_content: str, width: int = 79) -> str:
@@ -68,13 +68,16 @@ def _get_generic_ansi_content(
     publish_date = markdown_content.date or get_creation_date(
         content_context.index_file
     )
-    header_path = get_ansi_header_path(markdown_content.title)
+    header_path = get_ansi_cover_path(markdown_content.title, ANSI_HEADERS_DIR)
     header = header_path.read_text(encoding="utf-8")
+    thumbnail_path = get_ansi_cover_path(markdown_content.title, ANSI_THUMBNAILS_DIR)
+    thumbnail = thumbnail_path.read_text(encoding="utf-8")
     # Assemble final payload for the published content model
     generic_ansi_content_dict = {
         **markdown_content.model_dump(),
         "slug": slug,
         "header": header,
+        "thumbnail": thumbnail,
         "title": markdown_content.title,
         "reading_time_minutes": reading_time_minutes,
         "publish_date": publish_date,

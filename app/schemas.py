@@ -164,6 +164,7 @@ class CoverUrls(BaseModel):
 class GenericANSIContent(BaseModel):
     slug: str
     header: str
+    thumbnail: str
     title: str
     publish_date: str
     body: str | None = None

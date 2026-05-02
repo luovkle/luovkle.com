@@ -44,6 +44,7 @@ UNEXPECTED_ERROR_ANSI_TEMPLATE = """
 POST_LIST_ANSI_TEMPLATE = """
 \033[47;30;1mRevelations\033[0m
 {% for post in posts %}
+{{ post.thumbnail }}
 \033[1;97m{{ post.title }}\033[0m{% if post.topic %}\n{{ post.topic }}{% endif %}
 \033[90m{{ post.reading_time }}\t{{ post.publish_date }}\033[0m
 \033[3m\033[4m\033[34m{{ post.url }}\033[0m\n
@@ -53,6 +54,7 @@ POST_LIST_ANSI_TEMPLATE = """
 PROJECT_LIST_ANSI_TEMPLATE = """
 \033[47;30;1mProjects\033[0m
 {% for project in projects %}
+{{ project.thumbnail }}
 \033[1;97m{{ project.title }}\033[0m{% if project.description %}\n{{ project.description }}{% endif %}
 \033[90m{{ project.reading_time }}\t{{ project.publish_date }}\033[0m
 \033[3m\033[4m\033[34m{{ project.url }}\033[0m\n

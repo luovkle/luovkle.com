@@ -25,6 +25,7 @@ THUMBNAILS_DIR = IMAGES_DIR / "thumbnails"
 # Directories for ansi images
 ANSI_IMAGES_DIR = _ANSI_DIR / "images"
 ANSI_HEADERS_DIR = ANSI_IMAGES_DIR / "headers"
+ANSI_THUMBNAILS_DIR = ANSI_IMAGES_DIR / "thumbnails"
 
 # Relative references used in templates
 STATIC_RELATIVE_DIR = STATIC_DIR
