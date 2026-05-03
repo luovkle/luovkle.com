@@ -44,20 +44,34 @@ UNEXPECTED_ERROR_ANSI_TEMPLATE = """
 POST_LIST_ANSI_TEMPLATE = """
 \033[47;30;1mRevelations\033[0m
 {% for post in posts %}
-{{ post.thumbnail }}
-\033[1;97m{{ post.title }}\033[0m{% if post.topic %}\n{{ post.topic }}{% endif %}
-\033[90m{{ post.reading_time }}\t{{ post.publish_date }}\033[0m
-\033[3m\033[4m\033[34m{{ post.url }}\033[0m\n
+{% set thumbnail_lines = post.thumbnail.split('\n') %}
+\033[3m\033[4m\033[34m{{ post.url }}\033[0m
+
+{{ thumbnail_lines[0] }}
+{{ thumbnail_lines[1] }}    \033[90m\033[40m{{ post.reading_time }}\033[0m  \033[90m{% if post.topic %}{{ post.topic }}{% endif %}\033[0m
+{{ thumbnail_lines[2] }}    \033[1;97m\033]8;;{{ post.url }}\033\\{{ post.title }}\033]8;;\033\\\033[0m
+{{ thumbnail_lines[3] }}
+{{ thumbnail_lines[4] }}
+{{ thumbnail_lines[5] }}
+{{ thumbnail_lines[6] }}    \033[90m{{ post.publish_date.rjust(35) }}\033[0m
+{{ thumbnail_lines[7] }}
 {% endfor %}
 """  # noqa: E501
 
 PROJECT_LIST_ANSI_TEMPLATE = """
 \033[47;30;1mProjects\033[0m
 {% for project in projects %}
-{{ project.thumbnail }}
-\033[1;97m{{ project.title }}\033[0m{% if project.description %}\n{{ project.description }}{% endif %}
-\033[90m{{ project.reading_time }}\t{{ project.publish_date }}\033[0m
-\033[3m\033[4m\033[34m{{ project.url }}\033[0m\n
+{% set thumbnail_lines = project.thumbnail.split('\n') %}
+\033[3m\033[4m\033[34m{{ project.url }}\033[0m
+
+{{ thumbnail_lines[0] }}
+{{ thumbnail_lines[1] }}    \033[90m\033[40m{{ project.reading_time }}\033[0m  \033[90m{% if project.repository %}Open Source{% else %}Closed Source{% endif %}\033[0m
+{{ thumbnail_lines[2] }}    \033[1;97m\033]8;;{{ project.url }}\033\\{{ project.title }}\033]8;;\033\\\033[0m
+{{ thumbnail_lines[3] }}    {{ project.ansi_description[0] }}
+{{ thumbnail_lines[4] }}    {{ project.ansi_description[1] }}
+{{ thumbnail_lines[5] }}
+{{ thumbnail_lines[6] }}    \033[90m{{ project.publish_date.rjust(35) }}\033[0m
+{{ thumbnail_lines[7] }}
 {% endfor %}
 """  # noqa: E501
 

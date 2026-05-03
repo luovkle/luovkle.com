@@ -1,6 +1,13 @@
 from pathlib import Path
 
-from pydantic import BaseModel, Field, HttpUrl, computed_field, field_serializer
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    HttpUrl,
+    computed_field,
+    field_serializer,
+)
 
 from app.types import TemplateArgsDict
 
@@ -101,7 +108,7 @@ class ContentContext(BaseModel):
 class MarkdownContent(BaseModel):
     title: str
     description: str | None = None
-    repository: str | None = None
+    repository: HttpUrl | None = None
     website: HttpUrl | None = None
     slug: str | None = None
     date: str | None = None
@@ -114,7 +121,7 @@ class PublishedContent(BaseModel):
     title: str
     body: str | None = None
     description: str | None = None
-    repository: str | None = None
+    repository: HttpUrl | None = None
     website: HttpUrl | None = None
     topic: str | None = None
     thumbnail_path: Path
@@ -169,6 +176,10 @@ class GenericANSIContent(BaseModel):
     publish_date: str
     body: str | None = None
     reading_time_minutes: int
+    description: str | None = None
+    repository: HttpUrl | None = None
+    website: HttpUrl | None = None
+    topic: str | None = None
 
     @computed_field
     @property
@@ -181,5 +192,5 @@ class PostANSIContent(GenericANSIContent): ...
 
 
 class ProjectANSIContent(GenericANSIContent):
-    repository: str | None = None
-    website: str | None = None
+    model_config = ConfigDict(validate_assignment=True)
+    ansi_description: list[str] | None = None
