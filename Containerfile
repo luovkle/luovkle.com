@@ -4,7 +4,7 @@ RUN yarn global add pnpm
 # Use `/www/` as the working directory
 WORKDIR /www/
 # Then, add the dependency management files and install it
-COPY ./package.json ./pnpm-lock.yaml /www/
+COPY ./package.json ./pnpm-lock.yaml pnpm-workspace.yaml /www/
 RUN pnpm i --frozen-lockfile
 # Copy asset, template, and HTML service files for CSS processing
 COPY ./app/assets/ /www/app/assets/
