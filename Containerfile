@@ -84,7 +84,9 @@ FROM python:3.13-slim-trixie AS runner
 RUN groupadd --system --gid 999 nonroot \
  && useradd --system --gid 999 --uid 999 --create-home nonroot
 # Install the system dependencies
-RUN apt-get update && apt-get install media-types -y
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends media-types \
+  && rm -rf /var/lib/apt/lists/*
 # Use `/www/` as the working directory
 WORKDIR /www/
 # Copy the virtual environment from the runner-builder
