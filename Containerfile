@@ -85,7 +85,7 @@ RUN groupadd --system --gid 999 nonroot \
  && useradd --system --gid 999 --uid 999 --create-home nonroot
 # Install the system dependencies
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends media-types \
+  && apt-get install -y --no-install-recommends media-types wget \
   && rm -rf /var/lib/apt/lists/*
 # Use `/www/` as the working directory
 WORKDIR /www/
