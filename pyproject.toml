@@ -17,7 +17,6 @@ build = [
 ]
 dev = [
     "prek>=0.3.10",
-    "ty>=0.0.1a23",
 ]
 
 [tool.ruff.lint]
