@@ -65,7 +65,7 @@ set default-list := true
 @clean:
   find app/ -type d -name "ansi" -prune -print -exec rm -rf -- {} +
   find app/static/ -type d -name "author" -prune -print -exec rm -rf -- {} +
-  find . -type d -name "__pycache__" -prune -print -exec rm -rf -- {} +
+  find app/ -type d -name "__pycache__" -prune -print -exec rm -rf -- {} +
   find app/static/ -type f \( \
     -name "*.css" -o \
     -name "*.webp" -o \
