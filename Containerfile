@@ -1,4 +1,4 @@
-FROM node:22-trixie-slim AS css-builder
+FROM node:26.1.0-trixie-slim AS css-builder
 # Install pnpm globally using yarn
 RUN yarn global add pnpm
 # Use `/www/` as the working directory
