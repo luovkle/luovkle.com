@@ -55,8 +55,6 @@ RUN python -m cli.img_to_ansi
 
 # Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim AS runner-builder
-# Install the system dependencies
-RUN apt-get update && apt-get install build-essential -y
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 # Copy from the cache instead of linking since it's a mounted volume
