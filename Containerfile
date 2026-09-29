@@ -1,6 +1,5 @@
 FROM node:26.1.0-trixie-slim AS css-builder
-# Install pnpm globally using yarn
-RUN yarn global add pnpm
+RUN npm -g install pnpm
 # Use `/www/` as the working directory
 WORKDIR /www/
 # Then, add the dependency management files and install it
